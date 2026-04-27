@@ -30,27 +30,27 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .screen{display:none}.screen.on{display:block}
 
 /* AUTH */
-#s-auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:#111}
-.abox{background:var(--card);border-radius:20px;padding:2rem 1.75rem;width:100%;max-width:340px;border:1px solid var(--border)}
-.alogo{text-align:center;margin-bottom:1.5rem}
-.alogo h1{font-size:20px;font-weight:700;letter-spacing:-.4px;margin-top:.5rem}
-.alogo p{font-size:12px;color:var(--text3);margin-top:2px}
-.atabs{display:grid;grid-template-columns:1fr 1fr;background:var(--bg2);border-radius:9px;padding:3px;margin-bottom:1.25rem}
+#s-auth{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:1rem;background:#111;overflow:hidden}
+.abox{background:var(--card);border-radius:20px;padding:1.25rem 1.5rem;width:100%;max-width:340px;border:1px solid var(--border);max-height:calc(100vh - 2rem);overflow-y:auto}
+.alogo{text-align:center;margin-bottom:1rem;display:flex;flex-direction:column;align-items:center;gap:.3rem}
+.alogo h1{font-size:18px;font-weight:700;letter-spacing:-.4px}
+.alogo p{font-size:11px;color:var(--text3)}
+.atabs{display:grid;grid-template-columns:1fr 1fr;background:var(--bg2);border-radius:9px;padding:3px;margin-bottom:1rem}
 .atab{padding:.5rem;text-align:center;cursor:pointer;font-size:13px;font-weight:500;border-radius:7px;color:var(--text2);transition:all .15s}
 .atab.on{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.1)}
 .aform{display:none}.aform.on{display:block}
-.fl{margin-bottom:.85rem}
+.fl{margin-bottom:.65rem}
 .fl label{display:block;font-size:11px;font-weight:600;color:var(--text3);margin-bottom:4px;letter-spacing:.4px;text-transform:uppercase}
-.fl input{width:100%;padding:.65rem .9rem;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:inherit;outline:none;color:var(--text);background:var(--card);transition:border .15s}
+.fl input{width:100%;padding:.55rem .9rem;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:inherit;outline:none;color:var(--text);background:var(--card);transition:border .15s}
 .fl input:focus{border-color:var(--border2)}
-.abtn{width:100%;padding:.7rem;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;background:#111;color:#fff;font-family:inherit;transition:opacity .15s}
+.abtn{width:100%;padding:.6rem;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;background:#111;color:#fff;font-family:inherit;transition:opacity .15s}
 .abtn:hover{opacity:.85}
 .abtn:disabled{opacity:.5;cursor:not-allowed}
 .amsg{font-size:12px;text-align:center;margin-top:.6rem;min-height:16px;color:var(--bad)}
 .amsg.ok{color:var(--ok)}
 
 /* LOADING */
-#s-loading{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#111}
+#s-loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#111}
 
 /* TOPBAR */
 .topbar{background:var(--card);border-bottom:1px solid var(--border);padding:.7rem 1.25rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 2px rgba(0,0,0,.04)}
@@ -173,35 +173,42 @@ input:checked+.slider:before{transform:translateX(16px)}
 
 <!-- LOADING -->
 <div id="s-loading" class="screen on">
-  <svg width="48" height="48" viewBox="0 0 100 100" fill="none">
-    <circle cx="50" cy="50" r="49" fill="#fff" opacity=".1"/>
-    <circle cx="50" cy="50" r="43" fill="none" stroke="#fff" stroke-width="1.2" stroke-dasharray="2.5 3.5"/>
-    <path d="M43 74 L40 66 Q38 61 42 57 L60 57 Q64 61 62 66 L59 74Z" fill="#fff"/>
-    <path d="M35 52 Q33 40 38 33 Q44 24 52 24 Q62 24 67 33 Q72 42 68 54 Q65 61 60 63 L42 63 Q37 61 35 52Z" fill="#fff"/>
-    <path d="M50 24 C54 18 60 12 68 6 C72 3 76 1 80 0 C76 4 71 9 66 15 C61 21 56 26 52 28Z" fill="#fff"/>
-    <path d="M35 52 Q31 56 32 62 Q34 67 38 67 Q41 65 41 61 L37 50Z" fill="#fff"/>
-    <path d="M65 52 Q69 56 68 62 Q66 67 62 67 Q59 65 59 61 L63 50Z" fill="#fff"/>
-    <ellipse cx="45" cy="50" rx="3" ry="2.5" fill="#111"/>
-    <path d="M46 62 Q51 65 57 62" stroke="#111" stroke-width="1.1" fill="none" stroke-linecap="round"/>
-  </svg>
+  <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:#ffffff">
+  <circle cx="50" cy="50" r="47" stroke="currentColor" stroke-width="3.5"/>
+  <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 3"/>
+  <path d="M42 70 Q40 62 41 55 Q42 47 47 42 Q52 37 57 37 Q63 37 66 42 Q69 47 67 54 Q65 61 60 66 Q57 69 54 70 Z" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+  <path d="M63 52 Q66 55 64 59" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <circle cx="60" cy="49" r="1.5" fill="currentColor"/>
+  <path d="M47 70 Q50 74 54 70" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M43 40 Q50 34 58 35" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M44 39 Q41 35 44 33 Q47 35 45 39" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M47 37 Q45 33 48 31 Q51 33 49 37" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M51 36 Q50 32 53 31 Q56 33 54 37" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M55 36 Q55 32 58 32 Q61 34 58 37" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M18 38 Q16 44 16 50" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M19 58 Q18 63 20 67" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>
 </div>
 
 <!-- AUTH -->
 <div id="s-auth" class="screen">
 <div class="abox">
   <div class="alogo">
-    <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
-      <circle cx="50" cy="50" r="49" fill="#111"/>
-      <circle cx="50" cy="50" r="43" fill="none" stroke="#fff" stroke-width="1.2" stroke-dasharray="2.5 3.5"/>
-      <path d="M43 74 L40 66 Q38 61 42 57 L60 57 Q64 61 62 66 L59 74Z" fill="#fff"/>
-      <path d="M35 52 Q33 40 38 33 Q44 24 52 24 Q62 24 67 33 Q72 42 68 54 Q65 61 60 63 L42 63 Q37 61 35 52Z" fill="#fff"/>
-      <path d="M50 24 C54 18 60 12 68 6 C72 3 76 1 80 0 C76 4 71 9 66 15 C61 21 56 26 52 28Z" fill="#fff"/>
-      <path d="M35 52 Q31 56 32 62 Q34 67 38 67 Q41 65 41 61 L37 50Z" fill="#fff"/>
-      <path d="M65 52 Q69 56 68 62 Q66 67 62 67 Q59 65 59 61 L63 50Z" fill="#fff"/>
-      <ellipse cx="45" cy="50" rx="3" ry="2.5" fill="#111"/>
-      <path d="M54 43 Q57 50 55 57" stroke="#111" stroke-width="1.3" fill="none" stroke-linecap="round"/>
-      <path d="M46 62 Q51 65 57 62" stroke="#111" stroke-width="1.1" fill="none" stroke-linecap="round"/>
-    </svg>
+    <svg width="56" height="56" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:#1A1916">
+  <circle cx="50" cy="50" r="47" stroke="currentColor" stroke-width="3.5"/>
+  <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 3"/>
+  <path d="M42 70 Q40 62 41 55 Q42 47 47 42 Q52 37 57 37 Q63 37 66 42 Q69 47 67 54 Q65 61 60 66 Q57 69 54 70 Z" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+  <path d="M63 52 Q66 55 64 59" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <circle cx="60" cy="49" r="1.5" fill="currentColor"/>
+  <path d="M47 70 Q50 74 54 70" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M43 40 Q50 34 58 35" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M44 39 Q41 35 44 33 Q47 35 45 39" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M47 37 Q45 33 48 31 Q51 33 49 37" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M51 36 Q50 32 53 31 Q56 33 54 37" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M55 36 Q55 32 58 32 Q61 34 58 37" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M18 38 Q16 44 16 50" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M19 58 Q18 63 20 67" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>
     <h1>Preço Certo</h1>
     <p>Calculadora de marketplaces</p>
   </div>
@@ -229,17 +236,21 @@ input:checked+.slider:before{transform:translateX(16px)}
 <div id="s-app" class="screen">
   <div class="topbar">
     <div class="topbar-left">
-      <svg width="30" height="30" viewBox="0 0 100 100" fill="none">
-        <circle cx="50" cy="50" r="49" fill="#111"/>
-        <circle cx="50" cy="50" r="43" fill="none" stroke="#fff" stroke-width="1.2" stroke-dasharray="2.5 3.5"/>
-        <path d="M43 74 L40 66 Q38 61 42 57 L60 57 Q64 61 62 66 L59 74Z" fill="#fff"/>
-        <path d="M35 52 Q33 40 38 33 Q44 24 52 24 Q62 24 67 33 Q72 42 68 54 Q65 61 60 63 L42 63 Q37 61 35 52Z" fill="#fff"/>
-        <path d="M50 24 C54 18 60 12 68 6 C72 3 76 1 80 0 C76 4 71 9 66 15 C61 21 56 26 52 28Z" fill="#fff"/>
-        <path d="M35 52 Q31 56 32 62 Q34 67 38 67 Q41 65 41 61 L37 50Z" fill="#fff"/>
-        <path d="M65 52 Q69 56 68 62 Q66 67 62 67 Q59 65 59 61 L63 50Z" fill="#fff"/>
-        <ellipse cx="45" cy="50" rx="3" ry="2.5" fill="#111"/>
-        <path d="M46 62 Q51 65 57 62" stroke="#111" stroke-width="1.1" fill="none" stroke-linecap="round"/>
-      </svg>
+      <svg width="28" height="28" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:#1A1916">
+  <circle cx="50" cy="50" r="47" stroke="currentColor" stroke-width="3.5"/>
+  <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 3"/>
+  <path d="M42 70 Q40 62 41 55 Q42 47 47 42 Q52 37 57 37 Q63 37 66 42 Q69 47 67 54 Q65 61 60 66 Q57 69 54 70 Z" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+  <path d="M63 52 Q66 55 64 59" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <circle cx="60" cy="49" r="1.5" fill="currentColor"/>
+  <path d="M47 70 Q50 74 54 70" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M43 40 Q50 34 58 35" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M44 39 Q41 35 44 33 Q47 35 45 39" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M47 37 Q45 33 48 31 Q51 33 49 37" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M51 36 Q50 32 53 31 Q56 33 54 37" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M55 36 Q55 32 58 32 Q61 34 58 37" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M18 38 Q16 44 16 50" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M19 58 Q18 63 20 67" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>
       <span class="topbar-name">Preço Certo</span>
     </div>
     <div class="topbar-right">
