@@ -653,7 +653,7 @@ function rdHist(){
       <div class="sc-meta" id="meta-${s.id}">
         <span>Lucro <b id="lucro-${s.id}">${R(s.lucro)}</b></span>
         <span>Margem <b><span class="m-${cls}" id="mg-${s.id}">${P(s.margem)} · ${lbl}</span></b></span>
-        ${s.margem<18?`<span class="sugg-box" id="chip-${s.id}" onclick="applyPrice('${s.id}','${suggPrice(s)}')"><span class="sugg-label">Sugerido p/ 18%:</span> <b id="chip-val-${s.id}">${suggPrice(s)}</b><button class="sugg-save" id="chip-save-${s.id}" onclick="event.stopPropagation();savePriceUpdate('${s.id}')" title="Salvar">Salvar</button></span>`:''}
+        ${s.margem<18?`<span class="sugg-box" id="chip-${s.id}" data-sid="${s.id}" onclick="applyPrice(this)"><span class="sugg-label">Sugerido p/18%:</span> <b id="chip-val-${s.id}">${suggPrice(s)}</b><button class="sugg-save" id="chip-save-${s.id}" onclick="event.stopPropagation();doSaveSim(this)">Salvar</button></span>`:''}
       </div>
       <div class="sc-edit">
         <div class="sc-edit-grid">
@@ -699,15 +699,16 @@ function recompute(id,field,val){
       if(chip){
         const valEl=g('chip-val-'+id)
         if(valEl)valEl.textContent=sp
-        chip.onclick=()=>applyPrice(id,sp)
+        chip.onclick=function(){applyPrice(this)}
         const saveBtn=g('chip-save-'+id)
         if(saveBtn){saveBtn.onclick=e=>{e.stopPropagation();savePriceUpdate(id)}}
       } else {
         const newChip=document.createElement('span')
-        newChip.className='sugg-box';newChip.id='chip-'+id
+        newChip.className='sugg-box';newChip.id='chip-'+id;newChip.dataset.sid=id;newChip.onclick=function(){applyPrice(this)};
         newChip.innerHTML='<span class="sugg-label">Sugerido p/ 18%:</span> <b id="chip-val-'+id+'">'+sp+'</b><button class="sugg-save" id="chip-save-'+id+'" onclick="event.stopPropagation();savePriceUpdate(''+id+'')">Salvar</button>'
-        newChip.onclick=()=>applyPrice(id,sp)
+        newChip.onclick=function(){applyPrice(this)}
         metaEl.appendChild(newChip)
+        const nb=g('chip-save-'+id);if(nb){nb.addEventListener('click',function(e){e.stopPropagation();doSaveSim(this)})}
       }
     }else if(chip)chip.remove()
   }
@@ -732,21 +733,26 @@ function suggPriceDyn(s){
   }
 }
 
-function applyPrice(id,val){
-  // Apply suggested price to the price input of that card
-  const num=parseFloat(val.replace('R$ ','').replace(',','.'))
-  if(!num)return
-  // Find the price input in that card
+function applyPrice(el){
+  const id=el.dataset.sid
+  if(!id)return
+  const valEl=g('chip-val-'+id)
+  if(!valEl)return
+  const sp=parseFloat(valEl.textContent.replace('R$ ','').replace('.','').replace(',','.'))
+  if(!sp)return
   const card=g('meta-'+id)?.closest('.scard')
   if(!card)return
   const inp=card.querySelectorAll('.sc-edit-field input')[0]
   if(!inp)return
-  inp.value=num.toFixed(2)
+  inp.value=sp.toFixed(2)
   inp.dispatchEvent(new Event('input'))
-  // Show save button
   const saveBtn=g('chip-save-'+id)
   if(saveBtn)saveBtn.style.display='inline-block'
-  toast('Preço aplicado! Clique em Salvar para confirmar.','ok')
+  toast('Preco aplicado — clique em Salvar para confirmar.','ok')
+}
+function doSaveSim(btn){
+  const chip=btn.closest('.sugg-box')
+  if(chip)savePriceUpdate(chip.dataset.sid)
 }
 
 async function savePriceUpdate(id){
