@@ -162,6 +162,10 @@ input:checked+.slider:before{transform:translateX(16px)}
 .sc-edit-field input{width:100%;padding:.4rem .55rem;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;color:var(--text);background:var(--bg);outline:none}
 .sc-edit-result{font-size:12px;color:var(--text2);display:flex;gap:.75rem;flex-wrap:wrap}
 .sc-edit-result b{color:var(--text);font-weight:600}
+.sc-edit{display:block}
+.sugg-box{background:var(--warn-bg);border:1px solid var(--warn);border-radius:8px;padding:.5rem .85rem;margin-top:.5rem;font-size:12px;color:var(--warn)}
+.sugg-box b{font-size:13px;font-weight:700}
+.sugg-box span{opacity:.8}
 
 /* TOAST */
 .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:#111;color:#fff;padding:.65rem 1.25rem;border-radius:10px;font-size:13px;font-weight:500;opacity:0;transition:all .3s;z-index:999;white-space:nowrap;pointer-events:none}
@@ -423,10 +427,15 @@ async function loadSims(){
 }
 
 async function saveSim(s){
-  const{data,error}=await sb.from('simulations').insert({user_id:cu.id,type:s.type,name:s.name,data:s}).select().single()
-  if(error){toast('Erro: '+error.message,'err');return}
-  sims.unshift({...s,id:data.id,date:new Date(data.created_at).toLocaleString('pt-BR')})
-  toast('Simulação salva!','ok');swTab('hi')
+  try{
+    const payload={user_id:cu.id,type:s.type,name:s.name,data:s}
+    const{data,error}=await sb.from('simulations').insert(payload).select().single()
+    if(error){toast('Erro ao salvar: '+error.message,'err');return false}
+    sims.unshift({...s,id:data.id,date:new Date(data.created_at).toLocaleString('pt-BR')})
+    toast('Simulação salva!','ok');swTab('hi');return true
+  }catch(e){
+    toast('Erro: '+e.message,'err');return false
+  }
 }
 
 async function deleteSim(id){
@@ -488,13 +497,14 @@ function cml(manual){
   const cv=p*(comm/100),av=p*(ant/100),dv=p*(des/100),iv=p*(imp/100)
   const liq=p-(cv+av+dv+iv+fr+cost),mg=p>0?(liq/p)*100:0
   const{cls,lbl}=mi(mg)
+  const suggML=mg<18?`<div class="rrow"><span class="rl">💡 Preço sugerido (18%)</span><span class="rv" style="color:var(--warn);font-weight:600">${(()=>{const pd=comm/100+ant/100+des/100+imp/100+0.18;return pd>=1?'N/A':R((fr+cost)/(1-pd))})()}</span></div>`:''
   g('mr').innerHTML=
     row(`Comissão ML (${P(comm)})`,`-${R(cv)}`)+
     row(`Antecipação (${P(ant)})`,`-${R(av)}`)+
     row(`Desconto (${P(des)})`,`-${R(dv)}`)+
     row(`Imposto (${P(imp)})`,`-${R(iv)}`)+
     row('Frete',`-${R(fr)}`)+row('Custo',`-${R(cost)}`)+
-    rowT('Lucro líquido',R(liq))+rowM('Margem',`${P(mg)} · ${lbl}`,cls)
+    rowT('Lucro líquido',R(liq))+rowM('Margem',`${P(mg)} · ${lbl}`,cls)+suggML
 }
 
 function toggleFrete(){g('sh-fr-row').style.display=g('sh-ft').checked?'block':'none';csh()}
@@ -514,6 +524,13 @@ function csh(){
   const liq=p-(taxa+av+dv+iv+ov+fr+cost),mg=p>0?(liq/p)*100:0
   const{cls,lbl}=mi(mg)
   g('stval').textContent=`Taxa: ${R(taxa)} (${P(taxapct)} do preço de venda)`
+  const suggSH=(()=>{
+    if(mg>=18)return ''
+    const fixedPct=ant/100+des/100+imp/100+out/100+0.18
+    let lo=1,hi=10000
+    for(let i=0;i<40;i++){const mid=(lo+hi)/2;const t=shopRate(mid);const l=mid-(t+mid*fixedPct+fr+cost);if(l/mid>0.18)hi=mid;else lo=mid}
+    return `<div class="rrow"><span class="rl">💡 Preço sugerido (18%)</span><span class="rv" style="color:var(--warn);font-weight:600">${R((lo+hi)/2)}</span></div>`
+  })()
   g('sr').innerHTML=
     row(`Taxa Shopee (${P(taxapct)})`,`-${R(taxa)}`)+
     row(`Antecipação (${P(ant)})`,`-${R(av)}`)+
@@ -522,7 +539,7 @@ function csh(){
     (out>0?row(`Outros (${P(out)})`,`-${R(ov)}`):'')+
     (frOn?row('Frete',`-${R(fr)}`):'')+
     row('Custo',`-${R(cost)}`)+
-    rowT('Lucro líquido',R(liq))+rowM('Margem',`${P(mg)} · ${lbl}`,cls)
+    rowT('Lucro líquido',R(liq))+rowM('Margem',`${P(mg)} · ${lbl}`,cls)+suggSH
 }
 
 async function save(type){
@@ -541,7 +558,8 @@ async function save(type){
   }else{
     const p=parseFloat(g('sp').value)||0
     if(!p){toast('Preencha o preço antes de salvar.','err');return}
-    const cost=parseFloat(g('sc').value)||0,frOn=g('sh-ft').checked
+    const cost=parseFloat(g('sc').value)||0
+    const frOn=g('sh-ft').checked
     const fr=frOn?(parseFloat(g('sf').value)||0):0
     const ant=parseFloat(g('sa').value)||0,des=parseFloat(g('sdesc').value)||0
     const imp=parseFloat(g('simp').value)||0,out=parseFloat(g('so').value)||0
@@ -550,9 +568,14 @@ async function save(type){
     s.antec=ant;s.desc=des;s.imp=imp;s.outros=out
     s.lucro=p-(taxa+av+dv+iv+ov+fr+cost);s.margem=(s.lucro/p)*100
   }
-  btn.disabled=true;btn.textContent='Salvando...'
-  await saveSim(s)
-  btn.disabled=false;btn.textContent='Salvar simulação'
+  try{
+    btn.disabled=true;btn.textContent='Salvando...'
+    await saveSim(s)
+  }catch(e){
+    toast('Erro inesperado: '+e.message,'err')
+  }finally{
+    btn.disabled=false;btn.textContent='Salvar simulação'
+  }
 }
 
 function rdHist(){
@@ -563,35 +586,66 @@ function rdHist(){
     const{cls,lbl}=mi(s.margem)
     const seg=s.type==='ml'?(s.seg==='premium'?' · Premium':' · Clássico'):''
     window._es[s.id]={price:s.price,cost:s.cost,frete:s.frete||0}
+    const suggHtml=s.margem<18?`<div class="sugg-box">💡 Preço sugerido para 18% de margem: <b>${suggPrice(s)}</b> <span>— aumente o preço de venda</span></div>`:''
     return`<div class="scard">
       <div class="sc-top">
         <span class="sc-badge ${s.type}">${s.type==='ml'?'Mercado Livre'+seg:'Shopee'}</span>
         <div class="sc-actions">
           <span class="sc-date">${s.date}</span>
-          <button class="btn-sm" onclick="toggleEdit('${s.id}')">Editar</button>
           <button class="btn-sm" style="border-color:var(--bad);color:var(--bad)" onclick="deleteSim('${s.id}')">Excluir</button>
         </div>
       </div>
       <div class="sc-name">${s.name}</div>
       <div class="sc-meta">
-        <span>Preço <b>${R(s.price)}</b></span>
-        <span>Custo <b>${R(s.cost)}</b></span>
         <span>Lucro <b>${R(s.lucro)}</b></span>
         <span>Margem <b><span class="m-${cls}">${P(s.margem)} · ${lbl}</span></b></span>
       </div>
-      <div id="edit-${s.id}" style="display:none" class="sc-edit">
+      <div class="sc-edit">
         <div class="sc-edit-grid">
           <div class="sc-edit-field"><label>Preço venda (R$)</label><input type="number" step="0.01" value="${s.price.toFixed(2)}" oninput="recompute('${s.id}','price',this.value)"></div>
           <div class="sc-edit-field"><label>Custo (R$)</label><input type="number" step="0.01" value="${s.cost.toFixed(2)}" oninput="recompute('${s.id}','cost',this.value)"></div>
           <div class="sc-edit-field"><label>Frete (R$)</label><input type="number" step="0.01" value="${(s.frete||0).toFixed(2)}" oninput="recompute('${s.id}','frete',this.value)"></div>
         </div>
         <div class="sc-edit-result" id="er-${s.id}"></div>
+        ${suggHtml}
       </div>
     </div>`
   }).join('')
 }
 
-function toggleEdit(id){const el=g('edit-'+id);el.style.display=el.style.display==='none'?'block':'none'}
+
+
+// Calculate the suggested price to reach 18% margin
+function suggPrice(s){
+  // price = totalCosts / (1 - targetMargin)
+  const target=0.18
+  const comm=(s.comm||11.5)/100,ant=(s.antec||4.2)/100
+  const des=(s.desc||5)/100,imp=(s.imp||10)/100
+  const fr=s.frete||0,cost=s.cost||0
+  if(s.type==='ml'){
+    // liq = p - p*(comm+ant+des+imp) - fr - cost = p*0.18
+    // p*(1 - comm - ant - des - imp - target) = fr + cost
+    const pctDeductions=comm+ant+des+imp+target
+    if(pctDeductions>=1)return 'N/A'
+    const sp=(fr+cost)/(1-pctDeductions)
+    return R(sp)
+  }else{
+    // Shopee taxa varies by price - iterate to find price
+    // p*(1 - ant - des - imp - outros - target) - shopRate(p) - fr - cost = 0
+    const ant2=(s.antec||6)/100,des2=(s.desc||5)/100
+    const imp2=(s.imp||10)/100,out2=(s.outros||0)/100
+    const fixedPct=ant2+des2+imp2+out2+target
+    // Binary search
+    let lo=1,hi=10000
+    for(let i=0;i<40;i++){
+      const mid=(lo+hi)/2
+      const taxa=shopRate(mid)
+      const liq=mid-(taxa+mid*fixedPct+fr+cost)
+      if(liq/mid>target)hi=mid; else lo=mid
+    }
+    return R((lo+hi)/2)
+  }
+}
 
 function recompute(id,field,val){
   const s=sims.find(x=>x.id===id);if(!s)return
@@ -609,7 +663,34 @@ function recompute(id,field,val){
     liq=p-(taxa+av+dv+iv+ov+fr+c);mg=(liq/p)*100
   }
   const{cls,lbl}=mi(mg)
-  g('er-'+id).innerHTML=`Lucro: <b>${R(liq)}</b> &nbsp;·&nbsp; Margem: <b><span class="m-${cls}">${P(mg)} · ${lbl}</span></b>`
+  // dynamic sugg price using current edited values
+  const sCopy={...s,price:p,cost:c,frete:fr}
+  const suggHtml=mg<18?`<div class="sugg-box" style="margin-top:.5rem">💡 Para 18% de margem: <b>${suggPriceDyn(sCopy)}</b></div>`:''
+  g('er-'+id).innerHTML=`<span>Lucro: <b>${R(liq)}</b> &nbsp;·&nbsp; Margem: <b><span class="m-${cls}">${P(mg)} · ${lbl}</span></b></span>${suggHtml}`
+}
+
+function suggPriceDyn(s){
+  const target=0.18
+  const comm=(s.comm||11.5)/100,ant=(s.antec||4.2)/100
+  const des=(s.desc||5)/100,imp=(s.imp||10)/100
+  const fr=s.frete||0,cost=s.cost||0
+  if(s.type==='ml'){
+    const pctDeductions=comm+ant+des+imp+target
+    if(pctDeductions>=1)return 'N/A'
+    return R((fr+cost)/(1-pctDeductions))
+  }else{
+    const ant2=(s.antec||6)/100,des2=(s.desc||5)/100
+    const imp2=(s.imp||10)/100,out2=(s.outros||0)/100
+    const fixedPct=ant2+des2+imp2+out2+target
+    let lo=1,hi=10000
+    for(let i=0;i<40;i++){
+      const mid=(lo+hi)/2
+      const taxa=shopRate(mid)
+      const liq=mid-(taxa+mid*fixedPct+fr+cost)
+      if(liq/mid>target)hi=mid; else lo=mid
+    }
+    return R((lo+hi)/2)
+  }
 }
 
 init()
