@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>Preço Certo</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -49,7 +49,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .aform{display:none}.aform.on{display:block}
 .fl{margin-bottom:.7rem}
 .fl label{display:block;font-size:11px;font-weight:600;color:#888;margin-bottom:3px;letter-spacing:.4px;text-transform:uppercase}
-.fl input{width:100%;padding:.6rem .9rem;border:1.5px solid #E0DDD5;border-radius:9px;font-size:14px;font-family:inherit;outline:none;color:#111;background:#fff;transition:border .15s}
+.fl input{width:100%;padding:.6rem .9rem;border:1.5px solid #E0DDD5;border-radius:9px;font-size:16px;font-family:inherit;outline:none;color:#111;background:#fff;transition:border .15s}
 [data-theme="dark"] .fl input{background:#2C2C2A;border-color:#3C3C3A;color:#F0EFE8}
 .fl input:focus{border-color:#999}
 .abtn{width:100%;padding:.65rem;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;background:#111;color:#fff;font-family:inherit;transition:opacity .15s;margin-top:.2rem}
@@ -97,15 +97,15 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .frow>label{font-size:13px;color:var(--text2);flex:1;padding-right:.5rem}
 .frow-val{display:flex;align-items:center;gap:3px;flex-shrink:0}
 .frow-val .unit{font-size:12px;color:var(--text3);min-width:16px}
-.frow-val input{text-align:right;border:none;background:transparent;font-size:13px;font-weight:500;color:var(--text);width:88px;outline:none;font-family:inherit}
+.frow-val input{text-align:right;border:none;background:transparent;font-size:16px;font-weight:500;color:var(--text);width:88px;outline:none;font-family:inherit}
 .frow-val input::placeholder{color:var(--text3)}
-.frow input[type=text]{text-align:right;border:none;background:transparent;font-size:13px;font-weight:500;color:var(--text);width:160px;outline:none;font-family:inherit}
+.frow input[type=text]{text-align:right;border:none;background:transparent;font-size:16px;font-weight:500;color:var(--text);width:160px;outline:none;font-family:inherit}
 .fnote{font-size:10px;color:var(--text3);margin-left:2px}
 
 /* DIM */
 .dim-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:.5rem}
 .dim-block label{display:block;font-size:11px;color:var(--text3);margin-bottom:3px}
-.dim-block input{width:100%;padding:.45rem .55rem;border:1px solid var(--border);border-radius:8px;font-size:13px;outline:none;font-family:inherit;color:var(--text);background:var(--card)}
+.dim-block input{width:100%;padding:.45rem .55rem;border:1px solid var(--border);border-radius:8px;font-size:16px;outline:none;font-family:inherit;color:var(--text);background:var(--card)}
 
 /* VOL */
 .volinfo{font-size:11px;color:var(--text3);background:var(--bg);border-radius:6px;padding:.4rem .7rem;margin:.25rem 0 .5rem;border:1px solid var(--border)}
@@ -133,7 +133,7 @@ input:checked+.slider:before{transform:translateX(16px)}
 .rrow .rl{color:var(--text2)}.rrow .rv{font-weight:500;color:var(--text)}
 .rrow.tot{background:var(--bg)}.rrow.tot .rl{font-weight:600;color:var(--text)}.rrow.tot .rv{font-size:15px;font-weight:700}
 .m-bad{color:#fff;background:#DC2626;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
-.m-low{color:#fff;background:#EA580C;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
+.m-low{color:#fff;background:#92400E;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
 .m-warn{color:#fff;background:#D97706;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
 .m-ok{color:#fff;background:#16A34A;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
 .m-great{color:#fff;background:#7C3AED;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
@@ -165,13 +165,13 @@ input:checked+.slider:before{transform:translateX(16px)}
 .sc-edit{margin-top:.65rem;padding-top:.65rem;border-top:1px solid var(--border)}
 .sc-edit-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:.5rem}
 .sc-edit-field label{display:block;font-size:10px;color:var(--text3);margin-bottom:2px}
-.sc-edit-field input{width:100%;padding:.4rem .55rem;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;color:var(--text);background:var(--bg);outline:none}
+.sc-edit-field input{width:100%;padding:.4rem .55rem;border:1px solid var(--border);border-radius:7px;font-size:16px;font-family:inherit;color:var(--text);background:var(--bg);outline:none}
 .sc-edit-result{font-size:12px;color:var(--text2);display:flex;gap:.75rem;flex-wrap:wrap}
 .sc-edit-result b{color:var(--text);font-weight:600}
 .sc-edit{display:block}
-.sugg-box{background:var(--warn-bg);border:1px solid var(--warn);border-radius:8px;padding:.5rem .85rem;margin-top:.5rem;font-size:12px;color:var(--warn)}
-.sugg-box b{font-size:13px;font-weight:700}
-.sugg-box span{opacity:.8}
+.sugg-box{display:inline-flex;align-items:center;gap:4px;background:var(--warn-bg);border:1px solid var(--warn);border-radius:20px;padding:2px 9px;margin-top:.3rem;font-size:11px;color:var(--warn);cursor:pointer;transition:opacity .15s;user-select:none}
+.sugg-box:hover{opacity:.75}
+.sugg-box b{font-weight:700}
 
 /* TOAST */
 .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:#111;color:#fff;padding:.65rem 1.25rem;border-radius:10px;font-size:13px;font-weight:500;opacity:0;transition:all .3s;z-index:999;white-space:nowrap;pointer-events:none}
@@ -191,11 +191,11 @@ input:checked+.slider:before{transform:translateX(16px)}
   .card{padding:.75rem .85rem;margin-bottom:.6rem}
   .card-title{font-size:9px;margin-bottom:.5rem}
   .frow{padding:.45rem 0}
-  .frow>label{font-size:12px}
-  .frow-val input{width:75px;font-size:12px}
-  .frow input[type=text]{width:130px;font-size:12px}
+  .frow>label{font-size:13px}
+  .frow-val input{width:72px;font-size:16px}
+  .frow input[type=text]{width:120px;font-size:16px}
   .dim-grid{gap:5px}
-  .dim-block input{padding:.38rem .4rem;font-size:12px}
+  .dim-block input{padding:.38rem .4rem;font-size:16px}
   .result-card{margin-bottom:.6rem}
   .rrow{padding:.45rem .85rem;font-size:12px}
   .rrow.tot .rv{font-size:14px}
@@ -209,7 +209,7 @@ input:checked+.slider:before{transform:translateX(16px)}
   .sc-date{font-size:10px}
   .sc-edit-grid{grid-template-columns:1fr 1fr 1fr;gap:5px}
   .sc-edit-field label{font-size:9px}
-  .sc-edit-field input{padding:.35rem .4rem;font-size:12px}
+  .sc-edit-field input{padding:.35rem .4rem;font-size:16px}
   .sc-edit-result{font-size:11px}
   .sugg-box{font-size:11px;padding:.4rem .7rem}
   .seg{margin-bottom:.75rem}
@@ -642,7 +642,6 @@ function rdHist(){
     const{cls,lbl}=mi(s.margem)
     const seg=s.type==='ml'?(s.seg==='premium'?' · Premium':' · Clássico'):''
     window._es[s.id]={price:s.price,cost:s.cost,frete:s.frete||0}
-    const suggHtml=s.margem<18?`<div class="sugg-box">💡 Preço sugerido para 18% de margem: <b>${suggPrice(s)}</b> <span>— aumente o preço de venda</span></div>`:''
     return`<div class="scard">
       <div class="sc-top">
         <span class="sc-badge ${s.type}">${s.type==='ml'?'Mercado Livre'+seg:'Shopee'}</span>
@@ -652,9 +651,10 @@ function rdHist(){
         </div>
       </div>
       <div class="sc-name">${s.name}</div>
-      <div class="sc-meta">
-        <span>Lucro <b>${R(s.lucro)}</b></span>
-        <span>Margem <b><span class="m-${cls}">${P(s.margem)} · ${lbl}</span></b></span>
+      <div class="sc-meta" id="meta-${s.id}">
+        <span>Lucro <b id="lucro-${s.id}">${R(s.lucro)}</b></span>
+        <span>Margem <b><span class="m-${cls}" id="mg-${s.id}">${P(s.margem)} · ${lbl}</span></b></span>
+        ${s.margem<18?`<span class="sugg-box" onclick="copyPrice('${suggPrice(s)}')" title="Clique para copiar">💡 <b>${suggPrice(s)}</b></span>`:''}
       </div>
       <div class="sc-edit">
         <div class="sc-edit-grid">
@@ -662,8 +662,6 @@ function rdHist(){
           <div class="sc-edit-field"><label>Custo (R$)</label><input type="number" step="0.01" value="${s.cost.toFixed(2)}" oninput="recompute('${s.id}','cost',this.value)"></div>
           <div class="sc-edit-field"><label>Frete (R$)</label><input type="number" step="0.01" value="${(s.frete||0).toFixed(2)}" oninput="recompute('${s.id}','frete',this.value)"></div>
         </div>
-        <div class="sc-edit-result" id="er-${s.id}"></div>
-        ${suggHtml}
       </div>
     </div>`
   }).join('')
@@ -673,41 +671,14 @@ function rdHist(){
 
 // Calculate the suggested price to reach 18% margin
 function suggPrice(s){
-  // price = totalCosts / (1 - targetMargin)
-  const target=0.18
-  const comm=(s.comm||11.5)/100,ant=(s.antec||4.2)/100
-  const des=(s.desc||5)/100,imp=(s.imp||10)/100
-  const fr=s.frete||0,cost=s.cost||0
-  if(s.type==='ml'){
-    // liq = p - p*(comm+ant+des+imp) - fr - cost = p*0.18
-    // p*(1 - comm - ant - des - imp - target) = fr + cost
-    const pctDeductions=comm+ant+des+imp+target
-    if(pctDeductions>=1)return 'N/A'
-    const sp=(fr+cost)/(1-pctDeductions)
-    return R(sp)
-  }else{
-    // Shopee taxa varies by price - iterate to find price
-    // p*(1 - ant - des - imp - outros - target) - shopRate(p) - fr - cost = 0
-    const ant2=(s.antec||6)/100,des2=(s.desc||5)/100
-    const imp2=(s.imp||10)/100,out2=(s.outros||0)/100
-    const fixedPct=ant2+des2+imp2+out2+target
-    // Binary search
-    let lo=1,hi=10000
-    for(let i=0;i<40;i++){
-      const mid=(lo+hi)/2
-      const taxa=shopRate(mid)
-      const liq=mid-(taxa+mid*fixedPct+fr+cost)
-      if(liq/mid>target)hi=mid; else lo=mid
-    }
-    return R((lo+hi)/2)
-  }
+  return suggPriceDyn(s)
 }
 
 function recompute(id,field,val){
   const s=sims.find(x=>x.id===id);if(!s)return
   window._es[id][field]=parseFloat(val)||0
   const{price:p,cost:c,frete:fr}=window._es[id]
-  if(!p){g('er-'+id).innerHTML='';return}
+  if(!p)return
   let liq,mg
   if(s.type==='ml'){
     const cv=p*((s.comm||11.5)/100),av=p*((s.antec||4.2)/100)
@@ -719,34 +690,47 @@ function recompute(id,field,val){
     liq=p-(taxa+av+dv+iv+ov+fr+c);mg=(liq/p)*100
   }
   const{cls,lbl}=mi(mg)
-  // dynamic sugg price using current edited values
-  const sCopy={...s,price:p,cost:c,frete:fr}
-  const suggHtml=mg<18?`<div class="sugg-box" style="margin-top:.5rem">💡 Para 18% de margem: <b>${suggPriceDyn(sCopy)}</b></div>`:''
-  g('er-'+id).innerHTML=`<span>Lucro: <b>${R(liq)}</b> &nbsp;·&nbsp; Margem: <b><span class="m-${cls}">${P(mg)} · ${lbl}</span></b></span>${suggHtml}`
+  const lucroEl=g('lucro-'+id),mgEl=g('mg-'+id),metaEl=g('meta-'+id)
+  if(lucroEl)lucroEl.textContent=R(liq)
+  if(mgEl){mgEl.textContent=P(mg)+' · '+lbl;mgEl.className='m-'+cls}
+  if(metaEl){
+    let chip=metaEl.querySelector('.sugg-box')
+    if(mg<18){
+      const sp=suggPriceDyn({...s,price:p,cost:c,frete:fr})
+      if(chip){chip.innerHTML='💡 <b>'+sp+'</b>';chip.onclick=()=>copyPrice(sp)}
+      else{
+        chip=document.createElement('span')
+        chip.className='sugg-box';chip.title='Clique para copiar'
+        chip.innerHTML='💡 <b>'+sp+'</b>';chip.onclick=()=>copyPrice(sp)
+        metaEl.appendChild(chip)
+      }
+    }else if(chip)chip.remove()
+  }
 }
 
 function suggPriceDyn(s){
-  const target=0.18
-  const comm=(s.comm||11.5)/100,ant=(s.antec||4.2)/100
-  const des=(s.desc||5)/100,imp=(s.imp||10)/100
-  const fr=s.frete||0,cost=s.cost||0
+  const target=0.18,fr=s.frete||0,cost=s.cost||0
   if(s.type==='ml'){
-    const pctDeductions=comm+ant+des+imp+target
-    if(pctDeductions>=1)return 'N/A'
-    return R((fr+cost)/(1-pctDeductions))
+    const pct=(s.comm||11.5)/100+(s.antec||4.2)/100+(s.desc||5)/100+(s.imp||10)/100+target
+    if(pct>=1)return 'N/A'
+    return R((fr+cost)/(1-pct))
   }else{
-    const ant2=(s.antec||6)/100,des2=(s.desc||5)/100
-    const imp2=(s.imp||10)/100,out2=(s.outros||0)/100
-    const fixedPct=ant2+des2+imp2+out2+target
-    let lo=1,hi=10000
-    for(let i=0;i<40;i++){
+    // Binary search: find p where (p - shopRate(p) - p*fixedPct - fr - cost)/p = target
+    const fixedPct=(s.antec||6)/100+(s.desc||5)/100+(s.imp||10)/100+(s.outros||0)/100+target
+    let lo=cost+fr+1,hi=50000
+    for(let i=0;i<60;i++){
       const mid=(lo+hi)/2
-      const taxa=shopRate(mid)
-      const liq=mid-(taxa+mid*fixedPct+fr+cost)
-      if(liq/mid>target)hi=mid; else lo=mid
+      const liq=mid-shopRate(mid)-mid*fixedPct-fr-cost
+      liq/mid>target?hi=mid:lo=mid
     }
     return R((lo+hi)/2)
   }
+}
+
+function copyPrice(val){
+  const num=val.replace('R$ ','').replace(',','.')
+  navigator.clipboard.writeText(num).catch(()=>{})
+  toast('Preço copiado: '+val,'ok')
 }
 
 init()
