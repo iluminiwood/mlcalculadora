@@ -134,7 +134,7 @@ input:checked+.slider:before{transform:translateX(16px)}
 .rrow.tot{background:var(--bg)}.rrow.tot .rl{font-weight:600;color:var(--text)}.rrow.tot .rv{font-size:15px;font-weight:700}
 .m-bad{color:#fff;background:#DC2626;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
 .m-low{color:#fff;background:#92400E;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
-.m-warn{color:#fff;background:#D97706;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
+.m-warn{color:#fff;background:#B45309;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
 .m-ok{color:#fff;background:#16A34A;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
 .m-great{color:#fff;background:#7C3AED;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
 
@@ -166,8 +166,6 @@ input:checked+.slider:before{transform:translateX(16px)}
 .sc-edit-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:.5rem}
 .sc-edit-field label{display:block;font-size:10px;color:var(--text3);margin-bottom:2px}
 .sc-edit-field input{width:100%;padding:.4rem .55rem;border:1px solid var(--border);border-radius:7px;font-size:16px;font-family:inherit;color:var(--text);background:var(--bg);outline:none}
-.sc-edit-result{font-size:12px;color:var(--text2);display:flex;gap:.75rem;flex-wrap:wrap}
-.sc-edit-result b{color:var(--text);font-weight:600}
 .sc-edit{display:block}
 .sugg-box{display:inline-flex;align-items:center;gap:4px;background:var(--warn-bg);border:1px solid var(--warn);border-radius:20px;padding:2px 9px;margin-top:.3rem;font-size:11px;color:var(--warn);cursor:pointer;transition:opacity .15s;user-select:none}
 .sugg-box:hover{opacity:.75}
@@ -210,7 +208,6 @@ input:checked+.slider:before{transform:translateX(16px)}
   .sc-edit-grid{grid-template-columns:1fr 1fr 1fr;gap:5px}
   .sc-edit-field label{font-size:9px}
   .sc-edit-field input{padding:.35rem .4rem;font-size:16px}
-  .sc-edit-result{font-size:11px}
   .sugg-box{font-size:11px;padding:.4rem .7rem}
   .seg{margin-bottom:.75rem}
   .sg{font-size:12px;padding:.5rem}
@@ -677,17 +674,17 @@ function suggPrice(s){
 function recompute(id,field,val){
   const s=sims.find(x=>x.id===id);if(!s)return
   window._es[id][field]=parseFloat(val)||0
-  const{price:p,cost:c,frete:fr}=window._es[id]
+  const{price:p,cost:ct,frete:fr}=window._es[id]
   if(!p)return
   let liq,mg
   if(s.type==='ml'){
     const cv=p*((s.comm||11.5)/100),av=p*((s.antec||4.2)/100)
     const dv=p*((s.desc||5)/100),iv=p*((s.imp||10)/100)
-    liq=p-(cv+av+dv+iv+fr+c);mg=(liq/p)*100
+    liq=p-(cv+av+dv+iv+fr+ct);mg=(liq/p)*100
   }else{
     const taxa=shopRate(p),av=p*((s.antec||6)/100)
     const dv=p*((s.desc||5)/100),iv=p*((s.imp||10)/100),ov=p*((s.outros||0)/100)
-    liq=p-(taxa+av+dv+iv+ov+fr+c);mg=(liq/p)*100
+    liq=p-(taxa+av+dv+iv+ov+fr+ct);mg=(liq/p)*100
   }
   const{cls,lbl}=mi(mg)
   const lucroEl=g('lucro-'+id),mgEl=g('mg-'+id),metaEl=g('meta-'+id)
@@ -696,7 +693,7 @@ function recompute(id,field,val){
   if(metaEl){
     let chip=metaEl.querySelector('.sugg-box')
     if(mg<18){
-      const sp=suggPriceDyn({...s,price:p,cost:c,frete:fr})
+      const sp=suggPriceDyn({...s,price:p,cost:ct,frete:fr})
       if(chip){chip.innerHTML='💡 <b>'+sp+'</b>';chip.onclick=()=>copyPrice(sp)}
       else{
         chip=document.createElement('span')
