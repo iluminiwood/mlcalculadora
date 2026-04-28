@@ -132,11 +132,11 @@ input:checked+.slider:before{transform:translateX(16px)}
 .rrow:last-child{border-bottom:none}
 .rrow .rl{color:var(--text2)}.rrow .rv{font-weight:500;color:var(--text)}
 .rrow.tot{background:var(--bg)}.rrow.tot .rl{font-weight:600;color:var(--text)}.rrow.tot .rv{font-size:15px;font-weight:700}
-.m-bad{color:#fff;background:#DC2626;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
-.m-low{color:#fff;background:#92400E;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
-.m-warn{color:#fff;background:#B45309;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
-.m-ok{color:#fff;background:#16A34A;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
-.m-great{color:#fff;background:#7C3AED;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
+.m-bad{color:#fff;background:#DC2626;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:.1px}
+.m-low{color:#fff;background:#C2410C;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:.1px}
+.m-warn{color:#fff;background:#92400E;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:.1px}
+.m-ok{color:#fff;background:#15803D;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:.1px}
+.m-great{color:#fff;background:#6D28D9;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:.1px}
 
 /* BTNS */
 .calcbtn{width:100%;padding:.7rem;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;color:#fff;font-family:inherit;margin-bottom:.4rem;transition:opacity .15s}
@@ -157,7 +157,7 @@ input:checked+.slider:before{transform:translateX(16px)}
 .sc-badge.sh{background:#FED7AA;color:#7C2D12;border:1px solid #FB923C;font-weight:800}
 [data-theme="dark"] .sc-badge.sh{background:#431407;color:#FB923C;border:1px solid #9A3412}
 .sc-name{font-size:14px;font-weight:600;margin:.2rem 0 .35rem}
-.sc-meta{display:flex;gap:.65rem;flex-wrap:wrap;margin-bottom:.35rem}
+.sc-meta{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.35rem}
 .sc-meta span{font-size:12px;color:var(--text3)}
 .sc-meta b{color:var(--text);font-weight:600}
 .sc-date{font-size:11px;color:var(--text3)}
@@ -167,9 +167,11 @@ input:checked+.slider:before{transform:translateX(16px)}
 .sc-edit-field label{display:block;font-size:10px;color:var(--text3);margin-bottom:2px}
 .sc-edit-field input{width:100%;padding:.4rem .55rem;border:1px solid var(--border);border-radius:7px;font-size:16px;font-family:inherit;color:var(--text);background:var(--bg);outline:none}
 .sc-edit{display:block}
-.sugg-box{display:inline-flex;align-items:center;gap:4px;background:var(--warn-bg);border:1px solid var(--warn);border-radius:20px;padding:2px 9px;margin-top:.3rem;font-size:11px;color:var(--warn);cursor:pointer;transition:opacity .15s;user-select:none}
-.sugg-box:hover{opacity:.75}
-.sugg-box b{font-weight:700}
+.sugg-box{display:inline-flex;align-items:center;gap:4px;background:var(--warn-bg);border:1.5px solid var(--warn);border-radius:20px;padding:3px 11px;font-size:12px;color:var(--warn);cursor:pointer;transition:all .15s;user-select:none;font-weight:600}
+.sugg-box:hover{opacity:.8}
+.sugg-box .sugg-label{font-weight:400;opacity:.8;font-size:11px}
+.sugg-save{display:none;margin-left:4px;background:var(--ok);color:#fff;border:none;border-radius:12px;padding:2px 8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit}
+.sc-meta{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem}
 
 /* TOAST */
 .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:#111;color:#fff;padding:.65rem 1.25rem;border-radius:10px;font-size:13px;font-weight:500;opacity:0;transition:all .3s;z-index:999;white-space:nowrap;pointer-events:none}
@@ -651,7 +653,7 @@ function rdHist(){
       <div class="sc-meta" id="meta-${s.id}">
         <span>Lucro <b id="lucro-${s.id}">${R(s.lucro)}</b></span>
         <span>Margem <b><span class="m-${cls}" id="mg-${s.id}">${P(s.margem)} · ${lbl}</span></b></span>
-        ${s.margem<18?`<span class="sugg-box" onclick="copyPrice('${suggPrice(s)}')" title="Clique para copiar">💡 <b>${suggPrice(s)}</b></span>`:''}
+        ${s.margem<18?`<span class="sugg-box" id="chip-${s.id}" onclick="applyPrice('${s.id}','${suggPrice(s)}')"><span class="sugg-label">Sugerido p/ 18%:</span> <b id="chip-val-${s.id}">${suggPrice(s)}</b><button class="sugg-save" id="chip-save-${s.id}" onclick="event.stopPropagation();savePriceUpdate('${s.id}')" title="Salvar">Salvar</button></span>`:''}
       </div>
       <div class="sc-edit">
         <div class="sc-edit-grid">
@@ -691,15 +693,21 @@ function recompute(id,field,val){
   if(lucroEl)lucroEl.textContent=R(liq)
   if(mgEl){mgEl.textContent=P(mg)+' · '+lbl;mgEl.className='m-'+cls}
   if(metaEl){
-    let chip=metaEl.querySelector('.sugg-box')
+    let chip=g('chip-'+id)
     if(mg<18){
       const sp=suggPriceDyn({...s,price:p,cost:ct,frete:fr})
-      if(chip){chip.innerHTML='💡 <b>'+sp+'</b>';chip.onclick=()=>copyPrice(sp)}
-      else{
-        chip=document.createElement('span')
-        chip.className='sugg-box';chip.title='Clique para copiar'
-        chip.innerHTML='💡 <b>'+sp+'</b>';chip.onclick=()=>copyPrice(sp)
-        metaEl.appendChild(chip)
+      if(chip){
+        const valEl=g('chip-val-'+id)
+        if(valEl)valEl.textContent=sp
+        chip.onclick=()=>applyPrice(id,sp)
+        const saveBtn=g('chip-save-'+id)
+        if(saveBtn){saveBtn.onclick=e=>{e.stopPropagation();savePriceUpdate(id)}}
+      } else {
+        const newChip=document.createElement('span')
+        newChip.className='sugg-box';newChip.id='chip-'+id
+        newChip.innerHTML='<span class="sugg-label">Sugerido p/ 18%:</span> <b id="chip-val-'+id+'">'+sp+'</b><button class="sugg-save" id="chip-save-'+id+'" onclick="event.stopPropagation();savePriceUpdate(''+id+'')">Salvar</button>'
+        newChip.onclick=()=>applyPrice(id,sp)
+        metaEl.appendChild(newChip)
       }
     }else if(chip)chip.remove()
   }
@@ -724,10 +732,55 @@ function suggPriceDyn(s){
   }
 }
 
-function copyPrice(val){
-  const num=val.replace('R$ ','').replace(',','.')
-  navigator.clipboard.writeText(num).catch(()=>{})
-  toast('Preço copiado: '+val,'ok')
+function applyPrice(id,val){
+  // Apply suggested price to the price input of that card
+  const num=parseFloat(val.replace('R$ ','').replace(',','.'))
+  if(!num)return
+  // Find the price input in that card
+  const card=g('meta-'+id)?.closest('.scard')
+  if(!card)return
+  const inp=card.querySelectorAll('.sc-edit-field input')[0]
+  if(!inp)return
+  inp.value=num.toFixed(2)
+  inp.dispatchEvent(new Event('input'))
+  // Show save button
+  const saveBtn=g('chip-save-'+id)
+  if(saveBtn)saveBtn.style.display='inline-block'
+  toast('Preço aplicado! Clique em Salvar para confirmar.','ok')
+}
+
+async function savePriceUpdate(id){
+  const s=sims.find(x=>x.id===id);if(!s)return
+  const es=window._es[id];if(!es)return
+  const saveBtn=g('chip-save-'+id)
+  if(saveBtn){saveBtn.textContent='...';saveBtn.disabled=true}
+  // Recalculate with new values
+  const p=es.price,ct=es.cost,fr=es.frete
+  let liq,mg,newData={...s,price:p,cost:ct,frete:fr}
+  if(s.type==='ml'){
+    const cv=p*((s.comm||11.5)/100),av=p*((s.antec||4.2)/100)
+    const dv=p*((s.desc||5)/100),iv=p*((s.imp||10)/100)
+    liq=p-(cv+av+dv+iv+fr+ct);mg=(liq/p)*100
+  }else{
+    const taxa=shopRate(p),av=p*((s.antec||6)/100)
+    const dv=p*((s.desc||5)/100),iv=p*((s.imp||10)/100),ov=p*((s.outros||0)/100)
+    liq=p-(taxa+av+dv+iv+ov+fr+ct);mg=(liq/p)*100
+  }
+  newData.lucro=liq;newData.margem=mg
+  try{
+    const{error}=await sb.from('simulations').update({data:newData}).eq('id',id)
+    if(error){toast('Erro ao salvar: '+error.message,'err')}
+    else{
+      // Update local sims array
+      const idx=sims.findIndex(x=>x.id===id)
+      if(idx>=0)sims[idx]={...sims[idx],...newData}
+      toast('Simulação atualizada!','ok')
+      if(saveBtn){saveBtn.style.display='none';saveBtn.textContent='Salvar';saveBtn.disabled=false}
+    }
+  }catch(e){
+    toast('Erro: '+e.message,'err')
+    if(saveBtn){saveBtn.textContent='Salvar';saveBtn.disabled=false}
+  }
 }
 
 init()
