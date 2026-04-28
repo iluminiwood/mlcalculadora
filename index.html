@@ -183,9 +183,9 @@ input:checked+.slider:before{transform:translateX(16px)}
   <div class="abox">
     <div class="alogo">
       <svg width="58" height="58" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="50" cy="50" r="46" stroke="#111" stroke-width="4"/>
-        <circle cx="50" cy="50" r="38" stroke="#111" stroke-width="1.5" stroke-dasharray="2.5 3.5"/>
-        <text x="50" y="66" text-anchor="middle" font-size="48" font-weight="700" font-family="Georgia,serif" fill="#111">$</text>
+        <circle cx="50" cy="50" r="46" stroke="var(--text)" stroke-width="4"/>
+        <circle cx="50" cy="50" r="38" stroke="var(--text)" stroke-width="1.5" stroke-dasharray="2.5 3.5"/>
+        <text x="50" y="66" text-anchor="middle" font-size="48" font-weight="700" font-family="Georgia,serif" fill="var(--text)">$</text>
       </svg>
       <h1>Preço Certo</h1>
       <p>Calculadora de marketplaces</p>
@@ -418,7 +418,7 @@ async function reg(){
   m.className='amsg ok';m.textContent='Conta criada! Verifique o e-mail para confirmar.'
 }
 
-async function logout(){await sb.auth.signOut();frFixed=false}
+async function logout(){await sb.auth.signOut();cu=null;sims=[];frFixed=false;showAuth()}
 
 // SIMULATIONS
 async function loadSims(){
