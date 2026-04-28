@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Preço Certo</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -26,57 +26,62 @@
   --sh-bg:#2A1A1A;--sh-border:#4A2A2A;
   --ok-bg:#0A2010;--warn-bg:#201A08;--low-bg:#201808;--bad-bg:#200A0A;--great-bg:#1A1028;
 }
-body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:15px;transition:background .2s,color .2s;min-height:100vh}
-.screen{display:none}.screen.on{display:block}
+html,body{height:100%;overflow-x:hidden}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:15px;transition:background .2s,color .2s}
 
 /* AUTH */
-#s-auth{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:1rem;background:#111;overflow:hidden}
-.abox{background:var(--card);border-radius:20px;padding:1.25rem 1.5rem;width:100%;max-width:340px;border:1px solid var(--border);max-height:calc(100vh - 2rem);overflow-y:auto}
-.alogo{text-align:center;margin-bottom:1rem;display:flex;flex-direction:column;align-items:center;gap:.3rem}
-.alogo h1{font-size:18px;font-weight:700;letter-spacing:-.4px}
-.alogo p{font-size:11px;color:var(--text3)}
-.atabs{display:grid;grid-template-columns:1fr 1fr;background:var(--bg2);border-radius:9px;padding:3px;margin-bottom:1rem}
-.atab{padding:.5rem;text-align:center;cursor:pointer;font-size:13px;font-weight:500;border-radius:7px;color:var(--text2);transition:all .15s}
-.atab.on{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+#pg-auth{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#111;padding:1rem}
+.abox{background:#fff;border-radius:20px;padding:1.5rem 1.5rem 1.75rem;width:100%;max-width:340px}
+[data-theme="dark"] .abox{background:#1C1C1A;border:1px solid #2C2C2A}
+.alogo{text-align:center;margin-bottom:1rem}
+.alogo h1{font-size:18px;font-weight:700;letter-spacing:-.4px;color:#111;margin-top:.4rem}
+[data-theme="dark"] .alogo h1{color:#F0EFE8}
+.alogo p{font-size:11px;color:#999}
+.atabs{display:grid;grid-template-columns:1fr 1fr;background:#F0EFE8;border-radius:9px;padding:3px;margin-bottom:1rem}
+[data-theme="dark"] .atabs{background:#2C2C2A}
+.atab{padding:.45rem;text-align:center;cursor:pointer;font-size:13px;font-weight:500;border-radius:7px;color:#888;transition:all .15s}
+.atab.on{background:#fff;color:#111;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+[data-theme="dark"] .atab.on{background:#3C3C3A;color:#F0EFE8}
 .aform{display:none}.aform.on{display:block}
-.fl{margin-bottom:.65rem}
-.fl label{display:block;font-size:11px;font-weight:600;color:var(--text3);margin-bottom:4px;letter-spacing:.4px;text-transform:uppercase}
-.fl input{width:100%;padding:.55rem .9rem;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:inherit;outline:none;color:var(--text);background:var(--card);transition:border .15s}
-.fl input:focus{border-color:var(--border2)}
-.abtn{width:100%;padding:.6rem;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;background:#111;color:#fff;font-family:inherit;transition:opacity .15s}
-.abtn:hover{opacity:.85}
-.abtn:disabled{opacity:.5;cursor:not-allowed}
-.amsg{font-size:12px;text-align:center;margin-top:.6rem;min-height:16px;color:var(--bad)}
-.amsg.ok{color:var(--ok)}
+.fl{margin-bottom:.7rem}
+.fl label{display:block;font-size:11px;font-weight:600;color:#888;margin-bottom:3px;letter-spacing:.4px;text-transform:uppercase}
+.fl input{width:100%;padding:.6rem .9rem;border:1.5px solid #E0DDD5;border-radius:9px;font-size:14px;font-family:inherit;outline:none;color:#111;background:#fff;transition:border .15s}
+[data-theme="dark"] .fl input{background:#2C2C2A;border-color:#3C3C3A;color:#F0EFE8}
+.fl input:focus{border-color:#999}
+.abtn{width:100%;padding:.65rem;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;background:#111;color:#fff;font-family:inherit;transition:opacity .15s;margin-top:.2rem}
+.abtn:hover{opacity:.85}.abtn:disabled{opacity:.5;cursor:not-allowed}
+.amsg{font-size:12px;text-align:center;margin-top:.5rem;min-height:15px;color:#DC2626}
+.amsg.ok{color:#15803D}
 
-/* LOADING */
-#s-loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#111}
+/* APP */
+#pg-app{display:none;flex-direction:column;min-height:100vh}
 
 /* TOPBAR */
-.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:.7rem 1.25rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-.topbar-left{display:flex;align-items:center;gap:.6rem}
-.topbar-name{font-size:16px;font-weight:700;letter-spacing:-.3px}
-.topbar-right{display:flex;align-items:center;gap:.6rem}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:.7rem 1.25rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-left{display:flex;align-items:center;gap:.55rem}
+.topbar-name{font-size:15px;font-weight:700;letter-spacing:-.3px}
+.topbar-right{display:flex;align-items:center;gap:.5rem}
 .uname{font-size:12px;color:var(--text3)}
-.btn-sm{padding:.32rem .75rem;border:1px solid var(--border2);border-radius:6px;background:transparent;font-size:12px;cursor:pointer;color:var(--text2);font-family:inherit;transition:all .15s}
+.btn-sm{padding:.3rem .7rem;border:1px solid var(--border2);border-radius:6px;background:transparent;font-size:12px;cursor:pointer;color:var(--text2);font-family:inherit;transition:all .15s}
 .btn-sm:hover{background:var(--bg2)}
-.btn-icon{padding:.35rem .5rem;border:1px solid var(--border2);border-radius:6px;background:transparent;cursor:pointer;font-size:16px;line-height:1;transition:all .15s}
+.btn-icon{padding:.32rem .45rem;border:1px solid var(--border2);border-radius:6px;background:transparent;cursor:pointer;font-size:15px;line-height:1}
 .btn-icon:hover{background:var(--bg2)}
 
 /* NAV */
-.nav{display:grid;grid-template-columns:repeat(3,1fr);background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:57px;z-index:99}
-.nb{padding:.7rem .25rem .6rem;text-align:center;font-size:12px;font-weight:600;cursor:pointer;color:var(--text3);border-bottom:2.5px solid transparent;transition:all .15s;user-select:none}
+.nav{display:grid;grid-template-columns:repeat(3,1fr);background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:53px;z-index:99}
+.nb{padding:.65rem .25rem .55rem;text-align:center;font-size:12px;font-weight:600;cursor:pointer;color:var(--text3);border-bottom:2.5px solid transparent;transition:all .15s;user-select:none}
 .nb-sub{display:block;font-size:10px;font-weight:400;margin-top:1px}
 .nb.on{color:var(--text);border-bottom-color:var(--text)}
 
 /* CONTENT */
-.tc{display:none;padding:1.25rem;max-width:720px;margin:0 auto}.tc.on{display:block}
+.tc{display:none;padding:1.25rem;max-width:720px;margin:0 auto;width:100%}
+.tc.on{display:block}
 
 /* SEGMENT */
 .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--bg2);border-radius:9px;padding:3px;margin-bottom:1rem}
 .sg{padding:.55rem;text-align:center;cursor:pointer;font-size:13px;font-weight:500;border-radius:7px;color:var(--text2);transition:all .15s;line-height:1.3}
 .sg span{display:block;font-size:10px;font-weight:400;opacity:.7}
-.sg.on{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.sg.on{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.08)}
 
 /* CARD */
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.9rem 1rem;margin-bottom:.75rem}
@@ -93,15 +98,15 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .frow input[type=text]{text-align:right;border:none;background:transparent;font-size:13px;font-weight:500;color:var(--text);width:160px;outline:none;font-family:inherit}
 .fnote{font-size:10px;color:var(--text3);margin-left:2px}
 
-/* DIM GRID */
+/* DIM */
 .dim-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:.5rem}
 .dim-block label{display:block;font-size:11px;color:var(--text3);margin-bottom:3px}
 .dim-block input{width:100%;padding:.45rem .55rem;border:1px solid var(--border);border-radius:8px;font-size:13px;outline:none;font-family:inherit;color:var(--text);background:var(--card)}
 
-/* VOL INFO */
+/* VOL */
 .volinfo{font-size:11px;color:var(--text3);background:var(--bg);border-radius:6px;padding:.4rem .7rem;margin:.25rem 0 .5rem;border:1px solid var(--border)}
 
-/* TAXA BOX */
+/* TAXA */
 .taxa-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:.65rem .85rem;margin-bottom:.75rem}
 .taxa-val{font-size:14px;font-weight:600;color:var(--text);margin-bottom:.2rem}
 .taxa-exp{font-size:11px;color:var(--text3);line-height:1.65}
@@ -123,21 +128,20 @@ input:checked+.slider:before{transform:translateX(16px)}
 .rrow:last-child{border-bottom:none}
 .rrow .rl{color:var(--text2)}.rrow .rv{font-weight:500;color:var(--text)}
 .rrow.tot{background:var(--bg)}.rrow.tot .rl{font-weight:600;color:var(--text)}.rrow.tot .rv{font-size:15px;font-weight:700}
-.m-bad  {color:var(--bad);  background:var(--bad-bg);  padding:2px 8px;border-radius:20px;font-size:12px}
-.m-low  {color:var(--low);  background:var(--low-bg);  padding:2px 8px;border-radius:20px;font-size:12px}
-.m-warn {color:var(--warn); background:var(--warn-bg); padding:2px 8px;border-radius:20px;font-size:12px}
-.m-ok   {color:var(--ok);   background:var(--ok-bg);   padding:2px 8px;border-radius:20px;font-size:12px}
+.m-bad{color:var(--bad);background:var(--bad-bg);padding:2px 8px;border-radius:20px;font-size:12px}
+.m-low{color:var(--low);background:var(--low-bg);padding:2px 8px;border-radius:20px;font-size:12px}
+.m-warn{color:var(--warn);background:var(--warn-bg);padding:2px 8px;border-radius:20px;font-size:12px}
+.m-ok{color:var(--ok);background:var(--ok-bg);padding:2px 8px;border-radius:20px;font-size:12px}
 .m-great{color:var(--great);background:var(--great-bg);padding:2px 8px;border-radius:20px;font-size:12px}
 
-/* BUTTONS */
+/* BTNS */
 .calcbtn{width:100%;padding:.7rem;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;color:#fff;font-family:inherit;margin-bottom:.4rem;transition:opacity .15s}
 .calcbtn:hover{opacity:.88}
 .calcbtn.ml{background:var(--ml)}.calcbtn.sh{background:var(--sh)}
 .savebtn{width:100%;padding:.6rem;border:1px solid var(--border2);border-radius:9px;background:transparent;font-size:13px;font-weight:500;cursor:pointer;color:var(--text2);font-family:inherit;transition:all .15s}
-.savebtn:hover{background:var(--bg2)}
-.savebtn:disabled{opacity:.5;cursor:not-allowed}
+.savebtn:hover{background:var(--bg2)}.savebtn:disabled{opacity:.5;cursor:not-allowed}
 
-/* HISTORY */
+/* HIST */
 .hist-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
 .hist-top h2{font-size:14px;font-weight:600}
 .hempty{text-align:center;padding:3rem 1rem;color:var(--text3);font-size:13px}
@@ -160,10 +164,9 @@ input:checked+.slider:before{transform:translateX(16px)}
 .sc-edit-result b{color:var(--text);font-weight:600}
 
 /* TOAST */
-.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:#111;color:#fff;padding:.65rem 1.25rem;border-radius:10px;font-size:13px;font-weight:500;opacity:0;transition:all .3s;z-index:999;white-space:nowrap}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:#111;color:#fff;padding:.65rem 1.25rem;border-radius:10px;font-size:13px;font-weight:500;opacity:0;transition:all .3s;z-index:999;white-space:nowrap;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.toast.ok{background:var(--ok)}
-.toast.err{background:var(--bad)}
+.toast.tok{background:#15803D}.toast.terr{background:#DC2626}
 
 @media(min-width:640px){.tc{padding:1.5rem 2rem}.card{padding:1rem 1.25rem}}
 @media(max-width:380px){.sc-edit-grid{grid-template-columns:1fr 1fr}}
@@ -171,86 +174,47 @@ input:checked+.slider:before{transform:translateX(16px)}
 </head>
 <body>
 
-<!-- LOADING -->
-<div id="s-loading" class="screen on">
-  <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:#ffffff">
-  <circle cx="50" cy="50" r="47" stroke="currentColor" stroke-width="3.5"/>
-  <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 3"/>
-  <path d="M42 70 Q40 62 41 55 Q42 47 47 42 Q52 37 57 37 Q63 37 66 42 Q69 47 67 54 Q65 61 60 66 Q57 69 54 70 Z" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
-  <path d="M63 52 Q66 55 64 59" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
-  <circle cx="60" cy="49" r="1.5" fill="currentColor"/>
-  <path d="M47 70 Q50 74 54 70" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
-  <path d="M43 40 Q50 34 58 35" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
-  <path d="M44 39 Q41 35 44 33 Q47 35 45 39" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <path d="M47 37 Q45 33 48 31 Q51 33 49 37" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <path d="M51 36 Q50 32 53 31 Q56 33 54 37" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <path d="M55 36 Q55 32 58 32 Q61 34 58 37" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <path d="M18 38 Q16 44 16 50" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-  <path d="M19 58 Q18 63 20 67" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-</svg>
-</div>
-
 <!-- AUTH -->
-<div id="s-auth" class="screen">
-<div class="abox">
-  <div class="alogo">
-    <svg width="56" height="56" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:#1A1916">
-  <circle cx="50" cy="50" r="47" stroke="currentColor" stroke-width="3.5"/>
-  <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 3"/>
-  <path d="M42 70 Q40 62 41 55 Q42 47 47 42 Q52 37 57 37 Q63 37 66 42 Q69 47 67 54 Q65 61 60 66 Q57 69 54 70 Z" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
-  <path d="M63 52 Q66 55 64 59" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
-  <circle cx="60" cy="49" r="1.5" fill="currentColor"/>
-  <path d="M47 70 Q50 74 54 70" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
-  <path d="M43 40 Q50 34 58 35" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
-  <path d="M44 39 Q41 35 44 33 Q47 35 45 39" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <path d="M47 37 Q45 33 48 31 Q51 33 49 37" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <path d="M51 36 Q50 32 53 31 Q56 33 54 37" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <path d="M55 36 Q55 32 58 32 Q61 34 58 37" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <path d="M18 38 Q16 44 16 50" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-  <path d="M19 58 Q18 63 20 67" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-</svg>
-    <h1>Preço Certo</h1>
-    <p>Calculadora de marketplaces</p>
+<div id="pg-auth">
+  <div class="abox">
+    <div class="alogo">
+      <svg width="58" height="58" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="46" stroke="#111" stroke-width="4"/>
+        <circle cx="50" cy="50" r="38" stroke="#111" stroke-width="1.5" stroke-dasharray="2.5 3.5"/>
+        <text x="50" y="66" text-anchor="middle" font-size="48" font-weight="700" font-family="Georgia,serif" fill="#111">$</text>
+      </svg>
+      <h1>Preço Certo</h1>
+      <p>Calculadora de marketplaces</p>
+    </div>
+    <div class="atabs">
+      <div class="atab on" onclick="swAuth('login')">Entrar</div>
+      <div class="atab" onclick="swAuth('reg')">Cadastrar</div>
+    </div>
+    <div id="fl" class="aform on">
+      <div class="fl"><label>E-mail</label><input id="le" type="email" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')login()"></div>
+      <div class="fl"><label>Senha</label><input id="lp" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')login()"></div>
+      <button class="abtn" id="lbtn" onclick="login()">Entrar</button>
+      <div class="amsg" id="lm"></div>
+    </div>
+    <div id="fr" class="aform">
+      <div class="fl"><label>Nome</label><input id="rn" type="text" placeholder="Seu nome"></div>
+      <div class="fl"><label>E-mail</label><input id="re" type="email" placeholder="seu@email.com"></div>
+      <div class="fl"><label>Senha</label><input id="rp" type="password" placeholder="mín. 6 caracteres"></div>
+      <button class="abtn" id="rbtn" onclick="reg()">Criar conta</button>
+      <div class="amsg" id="rm"></div>
+    </div>
   </div>
-  <div class="atabs">
-    <div class="atab on" onclick="swAuth('login')">Entrar</div>
-    <div class="atab" onclick="swAuth('reg')">Cadastrar</div>
-  </div>
-  <div id="fl" class="aform on">
-    <div class="fl"><label>E-mail</label><input id="le" type="email" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')login()"></div>
-    <div class="fl"><label>Senha</label><input id="lp" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')login()"></div>
-    <button class="abtn" id="lbtn" onclick="login()">Entrar</button>
-    <div class="amsg" id="lm"></div>
-  </div>
-  <div id="fr" class="aform">
-    <div class="fl"><label>Nome</label><input id="rn" type="text" placeholder="Seu nome"></div>
-    <div class="fl"><label>E-mail</label><input id="re" type="email" placeholder="seu@email.com"></div>
-    <div class="fl"><label>Senha</label><input id="rp" type="password" placeholder="mín. 6 caracteres"></div>
-    <button class="abtn" id="rbtn" onclick="reg()">Criar conta</button>
-    <div class="amsg" id="rm"></div>
-  </div>
-</div>
 </div>
 
 <!-- APP -->
-<div id="s-app" class="screen">
+<div id="pg-app">
   <div class="topbar">
     <div class="topbar-left">
-      <svg width="28" height="28" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:#1A1916">
-  <circle cx="50" cy="50" r="47" stroke="currentColor" stroke-width="3.5"/>
-  <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 3"/>
-  <path d="M42 70 Q40 62 41 55 Q42 47 47 42 Q52 37 57 37 Q63 37 66 42 Q69 47 67 54 Q65 61 60 66 Q57 69 54 70 Z" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
-  <path d="M63 52 Q66 55 64 59" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
-  <circle cx="60" cy="49" r="1.5" fill="currentColor"/>
-  <path d="M47 70 Q50 74 54 70" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
-  <path d="M43 40 Q50 34 58 35" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
-  <path d="M44 39 Q41 35 44 33 Q47 35 45 39" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <path d="M47 37 Q45 33 48 31 Q51 33 49 37" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <path d="M51 36 Q50 32 53 31 Q56 33 54 37" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <path d="M55 36 Q55 32 58 32 Q61 34 58 37" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <path d="M18 38 Q16 44 16 50" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-  <path d="M19 58 Q18 63 20 67" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-</svg>
+      <svg width="28" height="28" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="46" stroke="var(--text)" stroke-width="4"/>
+        <circle cx="50" cy="50" r="38" stroke="var(--text)" stroke-width="1.5" stroke-dasharray="2.5 3.5"/>
+        <text x="50" y="66" text-anchor="middle" font-size="48" font-weight="700" font-family="Georgia,serif" fill="var(--text)">$</text>
+      </svg>
       <span class="topbar-name">Preço Certo</span>
     </div>
     <div class="topbar-right">
@@ -259,7 +223,6 @@ input:checked+.slider:before{transform:translateX(16px)}
       <button class="btn-sm" onclick="logout()">Sair</button>
     </div>
   </div>
-
   <div class="nav">
     <div class="nb on" onclick="swTab('ml')">ML<span class="nb-sub">Mercado Livre</span></div>
     <div class="nb" onclick="swTab('sh')">Shopee<span class="nb-sub">Calculadora</span></div>
@@ -328,7 +291,7 @@ input:checked+.slider:before{transform:translateX(16px)}
     <div class="taxa-box">
       <div class="card-title" style="margin-bottom:.3rem">Taxa Shopee — automática</div>
       <div class="taxa-val" id="stval">Preencha o preço para ver a taxa.</div>
-      <div class="taxa-exp">A Shopee cobra taxa fixa + % sobre o preço de venda:<br>≤R$79 → 20% &nbsp;·&nbsp; R$80–99 → 14%+R$16 &nbsp;·&nbsp; R$100–199 → 14%+R$20 &nbsp;·&nbsp; R$200+ → 14%+R$26</div>
+      <div class="taxa-exp">A Shopee cobra taxa fixa + % sobre o preço de venda:<br>&#8804;R$79 &#8594; 20% &nbsp;&#183;&nbsp; R$80&#8211;99 &#8594; 14%+R$16 &nbsp;&#183;&nbsp; R$100&#8211;199 &#8594; 14%+R$20 &nbsp;&#183;&nbsp; R$200+ &#8594; 14%+R$26</div>
     </div>
     <div class="result-card">
       <div class="result-header">Resultado — Shopee</div>
@@ -338,7 +301,7 @@ input:checked+.slider:before{transform:translateX(16px)}
     <button class="savebtn" id="sh-save" onclick="save('sh')">Salvar simulação</button>
   </div>
 
-  <!-- HISTÓRICO -->
+  <!-- HIST -->
   <div id="t-hi" class="tc">
     <div class="hist-top">
       <h2>Simulações salvas</h2>
@@ -348,387 +311,261 @@ input:checked+.slider:before{transform:translateX(16px)}
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════
-// SUPABASE CONFIG
-// ═══════════════════════════════════════
-const SUPA_URL = 'https://tftpxwhrzrjktvmopkpm.supabase.co'
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmdHB4d2hyenJqa3R2bW9wa3BtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMzk2MDUsImV4cCI6MjA5MjgxNTYwNX0.6Bnd5REA61OM1WLAnjA_l-GQaY5Dy5fP6YxG0x-ccZo'
-const sb = supabase.createClient(SUPA_URL, SUPA_KEY)
+const SURL='https://tftpxwhrzrjktvmopkpm.supabase.co'
+const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmdHB4d2hyenJqa3R2bW9wa3BtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMzk2MDUsImV4cCI6MjA5MjgxNTYwNX0.6Bnd5REA61OM1WLAnjA_l-GQaY5Dy5fP6YxG0x-ccZo'
+const sb=supabase.createClient(SURL,SKEY)
 
-// ═══════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════
-let cu = null          // current user
-let sims = []          // simulations list
-let frFixed = false    // frete was manually set
-let mlSeg = 'classic'  // ML segment type
-let dark = false       // dark mode
+let cu=null,sims=[],frFixed=false,mlSeg='classic',dark=false
 
-// ═══════════════════════════════════════
-// INIT — check session
-// ═══════════════════════════════════════
-async function init() {
-  const { data: { session } } = await sb.auth.getSession()
-  if (session?.user) {
-    cu = session.user
-    await enterApp()
-  } else {
-    show('s-auth')
-  }
-
-  // listen for auth changes
-  sb.auth.onAuthStateChange(async (_e, session) => {
-    if (session?.user && !cu) {
-      cu = session.user
-      await enterApp()
-    } else if (!session?.user) {
-      cu = null
-      show('s-auth')
-    }
-  })
+// PAGE SWITCHING — simple display toggle, no classes
+function showAuth(){
+  document.getElementById('pg-auth').style.display='flex'
+  document.getElementById('pg-app').style.display='none'
+}
+function showApp(){
+  document.getElementById('pg-auth').style.display='none'
+  document.getElementById('pg-app').style.display='flex'
 }
 
-// ═══════════════════════════════════════
-// HELPERS
-// ═══════════════════════════════════════
-const g = id => document.getElementById(id)
-const R = v => 'R$ ' + Number(v).toFixed(2).replace('.', ',')
-const P = v => Number(v).toFixed(2).replace('.', ',') + '%'
-function show(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'))
-  g(id).classList.add('on')
-}
-function toast(msg, type = '') {
-  const el = g('toast')
-  el.textContent = msg
-  el.className = 'toast ' + type
-  el.classList.add('show')
-  setTimeout(() => el.classList.remove('show'), 3000)
-}
-function mi(mg) {
-  if (mg < 0)  return { cls: 'bad',   lbl: 'Prejuízo — corrija já' }
-  if (mg < 10) return { cls: 'low',   lbl: 'Muito baixa' }
-  if (mg < 15) return { cls: 'warn',  lbl: 'Atenção' }
-  if (mg < 20) return { cls: 'ok',    lbl: 'Saudável' }
-  return             { cls: 'great', lbl: 'Excelente' }
-}
-const row  = (l, v) => `<div class="rrow"><span class="rl">${l}</span><span class="rv">${v}</span></div>`
-const rowT = (l, v) => `<div class="rrow tot"><span class="rl">${l}</span><span class="rv">${v}</span></div>`
-const rowM = (l, v, c) => `<div class="rrow tot"><span class="rl">${l}</span><span class="rv"><span class="m-${c}">${v}</span></span></div>`
-
-// ═══════════════════════════════════════
 // THEME
-// ═══════════════════════════════════════
-function toggleTheme() {
-  dark = !dark
-  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light')
-  g('tbtn').textContent = dark ? '☀️' : '🌙'
-  localStorage.setItem('pc-theme', dark ? 'dark' : 'light')
+function toggleTheme(){
+  dark=!dark
+  document.documentElement.setAttribute('data-theme',dark?'dark':'light')
+  document.getElementById('tbtn').textContent=dark?'☀️':'🌙'
+  localStorage.setItem('pc-theme',dark?'dark':'light')
 }
-// restore theme
-if (localStorage.getItem('pc-theme') === 'dark') {
-  dark = true
-  document.documentElement.setAttribute('data-theme', 'dark')
-}
+if(localStorage.getItem('pc-theme')==='dark'){dark=true;document.documentElement.setAttribute('data-theme','dark')}
 
-// ═══════════════════════════════════════
-// AUTH
-// ═══════════════════════════════════════
-function swAuth(t) {
-  document.querySelectorAll('.atab').forEach((e, i) => e.classList.toggle('on', i === (t === 'login' ? 0 : 1)))
-  g('fl').classList.toggle('on', t === 'login')
-  g('fr').classList.toggle('on', t === 'reg')
-  g('lm').textContent = ''; g('rm').textContent = ''
+// HELPERS
+const g=id=>document.getElementById(id)
+const R=v=>'R$ '+Number(v).toFixed(2).replace('.',',')
+const P=v=>Number(v).toFixed(2).replace('.',',')+' %'
+function toast(msg,type){
+  const el=g('toast')
+  el.textContent=msg
+  el.className='toast '+(type==='ok'?'tok':type==='err'?'terr':'')
+  el.classList.add('show')
+  setTimeout(()=>el.classList.remove('show'),3000)
 }
+function mi(mg){
+  if(mg<0) return{cls:'bad',lbl:'Prejuízo — corrija já'}
+  if(mg<10)return{cls:'low',lbl:'Muito baixa'}
+  if(mg<15)return{cls:'warn',lbl:'Atenção'}
+  if(mg<20)return{cls:'ok',lbl:'Saudável'}
+  return{cls:'great',lbl:'Excelente'}
+}
+const row=(l,v)=>`<div class="rrow"><span class="rl">${l}</span><span class="rv">${v}</span></div>`
+const rowT=(l,v)=>`<div class="rrow tot"><span class="rl">${l}</span><span class="rv">${v}</span></div>`
+const rowM=(l,v,c)=>`<div class="rrow tot"><span class="rl">${l}</span><span class="rv"><span class="m-${c}">${v}</span></span></div>`
 
-async function reg() {
-  const name = g('rn').value.trim()
-  const email = g('re').value.trim().toLowerCase()
-  const pass = g('rp').value
-  const m = g('rm')
-  if (!name || !email || !pass) { m.textContent = 'Preencha todos os campos.'; return }
-  if (pass.length < 6) { m.textContent = 'Senha: mínimo 6 caracteres.'; return }
-  g('rbtn').disabled = true; g('rbtn').textContent = 'Criando...'
-  const { error } = await sb.auth.signUp({
-    email, password: pass,
-    options: { data: { name } }
+// INIT
+async function init(){
+  // both hidden until we know the state
+  document.getElementById('pg-auth').style.display='none'
+  document.getElementById('pg-app').style.display='none'
+
+  const{data:{session}}=await sb.auth.getSession()
+  if(session?.user){cu=session.user;await enterApp()}
+  else showAuth()
+
+  sb.auth.onAuthStateChange(async(_e,session)=>{
+    if(session?.user){cu=session.user;await enterApp()}
+    else{cu=null;sims=[];showAuth()}
   })
-  g('rbtn').disabled = false; g('rbtn').textContent = 'Criar conta'
-  if (error) { m.textContent = error.message; return }
-  m.className = 'amsg ok'
-  m.textContent = 'Conta criada! Verifique seu e-mail para confirmar.'
 }
 
-async function login() {
-  const email = g('le').value.trim().toLowerCase()
-  const pass = g('lp').value
-  const m = g('lm')
-  if (!email || !pass) { m.textContent = 'Preencha e-mail e senha.'; return }
-  g('lbtn').disabled = true; g('lbtn').textContent = 'Entrando...'
-  const { error } = await sb.auth.signInWithPassword({ email, password: pass })
-  g('lbtn').disabled = false; g('lbtn').textContent = 'Entrar'
-  if (error) { m.textContent = 'E-mail ou senha incorretos.'; return }
-  // onAuthStateChange will handle the rest
-}
-
-async function logout() {
-  await sb.auth.signOut()
-  cu = null; sims = []; frFixed = false
-}
-
-async function enterApp() {
-  const name = cu.user_metadata?.name || cu.email.split('@')[0]
-  g('uname').textContent = name.split(' ')[0]
-  show('s-app')
+async function enterApp(){
+  const name=cu.user_metadata?.name||cu.email.split('@')[0]
+  g('uname').textContent=name.split(' ')[0]
+  showApp()
   await loadSims()
 }
 
-// ═══════════════════════════════════════
-// SIMULATIONS DB
-// ═══════════════════════════════════════
-async function loadSims() {
-  const { data, error } = await sb
-    .from('simulations')
-    .select('*')
-    .eq('user_id', cu.id)
-    .order('created_at', { ascending: false })
-  if (error) { console.error(error); return }
-  sims = (data || []).map(d => ({
-    ...d.data,
-    id: d.id,
-    date: new Date(d.created_at).toLocaleString('pt-BR')
-  }))
+// AUTH
+function swAuth(t){
+  document.querySelectorAll('.atab').forEach((e,i)=>e.classList.toggle('on',i===(t==='login'?0:1)))
+  g('fl').classList.toggle('on',t==='login')
+  g('fr').classList.toggle('on',t==='reg')
+  g('lm').textContent='';g('rm').textContent=''
 }
 
-async function saveSim(simData) {
-  const { data, error } = await sb
-    .from('simulations')
-    .insert({ user_id: cu.id, type: simData.type, name: simData.name, data: simData })
-    .select()
-    .single()
-  if (error) { toast('Erro ao salvar: ' + error.message, 'err'); return }
-  sims.unshift({ ...simData, id: data.id, date: new Date(data.created_at).toLocaleString('pt-BR') })
-  toast('Simulação salva!', 'ok')
-  swTab('hi')
+async function login(){
+  const email=g('le').value.trim().toLowerCase(),pass=g('lp').value,m=g('lm')
+  m.textContent=''
+  if(!email||!pass){m.textContent='Preencha e-mail e senha.';return}
+  g('lbtn').disabled=true;g('lbtn').textContent='Entrando...'
+  const{error}=await sb.auth.signInWithPassword({email,password:pass})
+  g('lbtn').disabled=false;g('lbtn').textContent='Entrar'
+  if(error){m.textContent='E-mail ou senha incorretos.'}
 }
 
-async function deleteSim(id) {
-  const { error } = await sb.from('simulations').delete().eq('id', id)
-  if (error) { toast('Erro ao excluir.', 'err'); return }
-  sims = sims.filter(s => s.id !== id)
-  rdHist()
+async function reg(){
+  const name=g('rn').value.trim(),email=g('re').value.trim().toLowerCase(),pass=g('rp').value,m=g('rm')
+  m.textContent=''
+  if(!name||!email||!pass){m.textContent='Preencha todos os campos.';return}
+  if(pass.length<6){m.textContent='Senha: mínimo 6 caracteres.';return}
+  g('rbtn').disabled=true;g('rbtn').textContent='Criando...'
+  const{error}=await sb.auth.signUp({email,password:pass,options:{data:{name}}})
+  g('rbtn').disabled=false;g('rbtn').textContent='Criar conta'
+  if(error){m.textContent=error.message;return}
+  m.className='amsg ok';m.textContent='Conta criada! Verifique o e-mail para confirmar.'
 }
 
-async function clrAll() {
-  if (!confirm('Limpar todas as simulações?')) return
-  const { error } = await sb.from('simulations').delete().eq('user_id', cu.id)
-  if (error) { toast('Erro ao limpar.', 'err'); return }
-  sims = []
-  rdHist()
+async function logout(){await sb.auth.signOut();frFixed=false}
+
+// SIMULATIONS
+async function loadSims(){
+  const{data}=await sb.from('simulations').select('*').eq('user_id',cu.id).order('created_at',{ascending:false})
+  sims=(data||[]).map(d=>({...d.data,id:d.id,date:new Date(d.created_at).toLocaleString('pt-BR')}))
 }
 
-// ═══════════════════════════════════════
-// NAVIGATION
-// ═══════════════════════════════════════
-function swTab(t) {
-  document.querySelectorAll('.nb').forEach((e, i) => e.classList.toggle('on', ['ml', 'sh', 'hi'][i] === t))
-  ;['ml', 'sh', 'hi'].forEach(x => g('t-' + x).classList.toggle('on', x === t))
-  if (t === 'hi') rdHist()
+async function saveSim(s){
+  const{data,error}=await sb.from('simulations').insert({user_id:cu.id,type:s.type,name:s.name,data:s}).select().single()
+  if(error){toast('Erro: '+error.message,'err');return}
+  sims.unshift({...s,id:data.id,date:new Date(data.created_at).toLocaleString('pt-BR')})
+  toast('Simulação salva!','ok');swTab('hi')
 }
 
-// ═══════════════════════════════════════
-// ML SEGMENT
-// ═══════════════════════════════════════
-function setSeg(s) {
-  mlSeg = s
-  g('sg-c').classList.toggle('on', s === 'classic')
-  g('sg-p').classList.toggle('on', s === 'premium')
-  g('mco').value = s === 'classic' ? '11.5' : '16.5'
+async function deleteSim(id){
+  await sb.from('simulations').delete().eq('id',id)
+  sims=sims.filter(s=>s.id!==id);rdHist()
+}
+
+async function clrAll(){
+  if(!confirm('Limpar todas as simulações?'))return
+  await sb.from('simulations').delete().eq('user_id',cu.id)
+  sims=[];rdHist()
+}
+
+// NAV
+function swTab(t){
+  document.querySelectorAll('.nb').forEach((e,i)=>e.classList.toggle('on',['ml','sh','hi'][i]===t))
+  ;['ml','sh','hi'].forEach(x=>g('t-'+x).classList.toggle('on',x===t))
+  if(t==='hi')rdHist()
+}
+
+// ML
+function setSeg(s){
+  mlSeg=s
+  g('sg-c').classList.toggle('on',s==='classic')
+  g('sg-p').classList.toggle('on',s==='premium')
+  g('mco').value=s==='classic'?'11.5':'16.5'
   cml()
 }
 
-// SHOPEE FRETE TOGGLE
-function toggleFrete() {
-  g('sh-fr-row').style.display = g('sh-ft').checked ? 'block' : 'none'
-  csh()
+function calcFML(c,l,a,w){
+  if(!c||!l||!a||!w)return null
+  const pv=(c*l*a)/5000,pc=Math.max(pv,w)
+  const f=pc<=0.3?9.90:pc<=0.5?12.90:pc<=1?15.90:pc<=2?19.90:pc<=5?25.90:pc<=10?34.90:pc<=20?49.90:69.90
+  return{pv,pc,f}
 }
 
-// ═══════════════════════════════════════
-// FRETE VOLUMÉTRICO ML
-// ═══════════════════════════════════════
-function calcFML(c, l, a, w) {
-  if (!c || !l || !a || !w) return null
-  const pv = (c * l * a) / 5000
-  const pc = Math.max(pv, w)
-  let f
-  if (pc <= 0.3)      f = 9.90
-  else if (pc <= 0.5) f = 12.90
-  else if (pc <= 1)   f = 15.90
-  else if (pc <= 2)   f = 19.90
-  else if (pc <= 5)   f = 25.90
-  else if (pc <= 10)  f = 34.90
-  else if (pc <= 20)  f = 49.90
-  else                f = 69.90
-  return { pv, pc, f }
+function shopRate(p){
+  if(p<=79.99)return p*0.20+4
+  if(p<=99.99)return p*0.14+16
+  if(p<=199.99)return p*0.14+20
+  return p*0.14+26
 }
 
-// ═══════════════════════════════════════
-// SHOPEE TAXA
-// ═══════════════════════════════════════
-function shopRate(p) {
-  if (p <= 79.99)  return p * 0.20 + 4
-  if (p <= 99.99)  return p * 0.14 + 16
-  if (p <= 199.99) return p * 0.14 + 20
-  return p * 0.14 + 26
+function cml(manual){
+  const p=parseFloat(g('mp2').value)||0,cost=parseFloat(g('mc').value)||0
+  const comm=parseFloat(g('mco').value)||0,ant=parseFloat(g('ma').value)||0
+  const des=parseFloat(g('md').value)||0,imp=parseFloat(g('mi').value)||0
+  const c=parseFloat(g('mc1').value)||0,l=parseFloat(g('mc2').value)||0
+  const a=parseFloat(g('mc3').value)||0,w=parseFloat(g('mpeso').value)||0
+  const fi=calcFML(c,l,a,w),vi=g('mvolinfo')
+  if(fi){
+    vi.style.display='block'
+    vi.innerHTML=`Peso vol: <b>${fi.pv.toFixed(3)} kg</b> &nbsp;·&nbsp; Cobrado: <b>${fi.pc.toFixed(3)} kg</b> &nbsp;·&nbsp; Sugerido: <b>${R(fi.f)}</b>`
+    if(!manual&&!frFixed)g('mfr').value=fi.f.toFixed(2)
+  }else vi.style.display='none'
+  if(manual)frFixed=true
+  const fr=parseFloat(g('mfr').value)||0
+  if(!p){g('mr').innerHTML='<div class="rrow"><span class="rl">Preencha os dados acima</span><span class="rv">—</span></div>';return}
+  const cv=p*(comm/100),av=p*(ant/100),dv=p*(des/100),iv=p*(imp/100)
+  const liq=p-(cv+av+dv+iv+fr+cost),mg=p>0?(liq/p)*100:0
+  const{cls,lbl}=mi(mg)
+  g('mr').innerHTML=
+    row(`Comissão ML (${P(comm)})`,`-${R(cv)}`)+
+    row(`Antecipação (${P(ant)})`,`-${R(av)}`)+
+    row(`Desconto (${P(des)})`,`-${R(dv)}`)+
+    row(`Imposto (${P(imp)})`,`-${R(iv)}`)+
+    row('Frete',`-${R(fr)}`)+row('Custo',`-${R(cost)}`)+
+    rowT('Lucro líquido',R(liq))+rowM('Margem',`${P(mg)} · ${lbl}`,cls)
 }
 
-// ═══════════════════════════════════════
-// CALC ML
-// ═══════════════════════════════════════
-function cml(manual) {
-  const p    = parseFloat(g('mp2').value) || 0
-  const cost = parseFloat(g('mc').value)  || 0
-  const comm = parseFloat(g('mco').value) || 0
-  const ant  = parseFloat(g('ma').value)  || 0
-  const des  = parseFloat(g('md').value)  || 0
-  const imp  = parseFloat(g('mi').value)  || 0
-  const c    = parseFloat(g('mc1').value) || 0
-  const l    = parseFloat(g('mc2').value) || 0
-  const a    = parseFloat(g('mc3').value) || 0
-  const w    = parseFloat(g('mpeso').value) || 0
+function toggleFrete(){g('sh-fr-row').style.display=g('sh-ft').checked?'block':'none';csh()}
 
-  const fi = calcFML(c, l, a, w)
-  const vi = g('mvolinfo')
-  if (fi) {
-    vi.style.display = 'block'
-    vi.innerHTML = `Peso volumétrico: <b>${fi.pv.toFixed(3)} kg</b> &nbsp;·&nbsp; Cobrado: <b>${fi.pc.toFixed(3)} kg</b> &nbsp;·&nbsp; Sugerido: <b>${R(fi.f)}</b>`
-    if (!manual && !frFixed) g('mfr').value = fi.f.toFixed(2)
-  } else {
-    vi.style.display = 'none'
-  }
-  if (manual) frFixed = true
-
-  const fr = parseFloat(g('mfr').value) || 0
-  if (!p) {
-    g('mr').innerHTML = '<div class="rrow"><span class="rl">Preencha os dados acima</span><span class="rv">—</span></div>'
+function csh(){
+  const p=parseFloat(g('sp').value)||0,cost=parseFloat(g('sc').value)||0
+  const ant=parseFloat(g('sa').value)||0,des=parseFloat(g('sdesc').value)||0
+  const imp=parseFloat(g('simp').value)||0,out=parseFloat(g('so').value)||0
+  const frOn=g('sh-ft').checked,fr=frOn?(parseFloat(g('sf').value)||0):0
+  if(!p){
+    g('stval').textContent='Preencha o preço para ver a taxa.'
+    g('sr').innerHTML='<div class="rrow"><span class="rl">Preencha os dados acima</span><span class="rv">—</span></div>'
     return
   }
-
-  const cv = p * (comm / 100), av = p * (ant / 100), dv = p * (des / 100), iv = p * (imp / 100)
-  const liq = p - (cv + av + dv + iv + fr + cost)
-  const mg = p > 0 ? (liq / p) * 100 : 0
-  const { cls, lbl } = mi(mg)
-
-  g('mr').innerHTML =
-    row(`Comissão ML (${P(comm)})`, `-${R(cv)}`) +
-    row(`Antecipação (${P(ant)})`, `-${R(av)}`) +
-    row(`Desconto (${P(des)})`, `-${R(dv)}`) +
-    row(`Imposto (${P(imp)})`, `-${R(iv)}`) +
-    row('Frete', `-${R(fr)}`) +
-    row('Custo', `-${R(cost)}`) +
-    rowT('Lucro líquido', R(liq)) +
-    rowM('Margem', `${P(mg)} · ${lbl}`, cls)
+  const taxa=shopRate(p),taxapct=(taxa/p)*100
+  const av=p*(ant/100),dv=p*(des/100),iv=p*(imp/100),ov=p*(out/100)
+  const liq=p-(taxa+av+dv+iv+ov+fr+cost),mg=p>0?(liq/p)*100:0
+  const{cls,lbl}=mi(mg)
+  g('stval').textContent=`Taxa: ${R(taxa)} (${P(taxapct)} do preço de venda)`
+  g('sr').innerHTML=
+    row(`Taxa Shopee (${P(taxapct)})`,`-${R(taxa)}`)+
+    row(`Antecipação (${P(ant)})`,`-${R(av)}`)+
+    row(`Desconto (${P(des)})`,`-${R(dv)}`)+
+    row(`Imposto (${P(imp)})`,`-${R(iv)}`)+
+    (out>0?row(`Outros (${P(out)})`,`-${R(ov)}`):'')+
+    (frOn?row('Frete',`-${R(fr)}`):'')+
+    row('Custo',`-${R(cost)}`)+
+    rowT('Lucro líquido',R(liq))+rowM('Margem',`${P(mg)} · ${lbl}`,cls)
 }
 
-// ═══════════════════════════════════════
-// CALC SHOPEE
-// ═══════════════════════════════════════
-function csh() {
-  const p    = parseFloat(g('sp').value)    || 0
-  const cost = parseFloat(g('sc').value)    || 0
-  const ant  = parseFloat(g('sa').value)    || 0
-  const des  = parseFloat(g('sdesc').value) || 0
-  const imp  = parseFloat(g('simp').value)  || 0
-  const out  = parseFloat(g('so').value)    || 0
-  const frOn = g('sh-ft').checked
-  const fr   = frOn ? (parseFloat(g('sf').value) || 0) : 0
-
-  if (!p) {
-    g('stval').textContent = 'Preencha o preço para ver a taxa.'
-    g('sr').innerHTML = '<div class="rrow"><span class="rl">Preencha os dados acima</span><span class="rv">—</span></div>'
-    return
+async function save(type){
+  const btn=g(type==='ml'?'ml-save':'sh-save')
+  let s={type,date:new Date().toLocaleString('pt-BR')}
+  if(type==='ml'){
+    const p=parseFloat(g('mp2').value)||0
+    if(!p){toast('Preencha o preço antes de salvar.','err');return}
+    const cost=parseFloat(g('mc').value)||0,comm=parseFloat(g('mco').value)||0
+    const ant=parseFloat(g('ma').value)||0,des=parseFloat(g('md').value)||0
+    const imp=parseFloat(g('mi').value)||0,fr=parseFloat(g('mfr').value)||0
+    const cv=p*(comm/100),av=p*(ant/100),dv=p*(des/100),iv=p*(imp/100)
+    s.name=g('mn').value||'Produto ML';s.price=p;s.cost=cost;s.frete=fr
+    s.comm=comm;s.antec=ant;s.desc=des;s.imp=imp;s.seg=mlSeg
+    s.lucro=p-(cv+av+dv+iv+fr+cost);s.margem=(s.lucro/p)*100
+  }else{
+    const p=parseFloat(g('sp').value)||0
+    if(!p){toast('Preencha o preço antes de salvar.','err');return}
+    const cost=parseFloat(g('sc').value)||0,frOn=g('sh-ft').checked
+    const fr=frOn?(parseFloat(g('sf').value)||0):0
+    const ant=parseFloat(g('sa').value)||0,des=parseFloat(g('sdesc').value)||0
+    const imp=parseFloat(g('simp').value)||0,out=parseFloat(g('so').value)||0
+    const taxa=shopRate(p),av=p*(ant/100),dv=p*(des/100),iv=p*(imp/100),ov=p*(out/100)
+    s.name=g('sn').value||'Produto Shopee';s.price=p;s.cost=cost;s.frete=fr
+    s.antec=ant;s.desc=des;s.imp=imp;s.outros=out
+    s.lucro=p-(taxa+av+dv+iv+ov+fr+cost);s.margem=(s.lucro/p)*100
   }
-
-  const taxa = shopRate(p), taxapct = (taxa / p) * 100
-  const av = p * (ant / 100), dv = p * (des / 100), iv = p * (imp / 100), ov = p * (out / 100)
-  const liq = p - (taxa + av + dv + iv + ov + fr + cost)
-  const mg = p > 0 ? (liq / p) * 100 : 0
-  const { cls, lbl } = mi(mg)
-
-  g('stval').textContent = `Taxa: ${R(taxa)} (${P(taxapct)} do preço de venda)`
-  g('sr').innerHTML =
-    row(`Taxa Shopee (${P(taxapct)})`, `-${R(taxa)}`) +
-    row(`Antecipação (${P(ant)})`, `-${R(av)}`) +
-    row(`Desconto (${P(des)})`, `-${R(dv)}`) +
-    row(`Imposto (${P(imp)})`, `-${R(iv)}`) +
-    (out > 0 ? row(`Outros (${P(out)})`, `-${R(ov)}`) : '') +
-    (frOn ? row('Frete', `-${R(fr)}`) : '') +
-    row('Custo', `-${R(cost)}`) +
-    rowT('Lucro líquido', R(liq)) +
-    rowM('Margem', `${P(mg)} · ${lbl}`, cls)
-}
-
-// ═══════════════════════════════════════
-// SAVE
-// ═══════════════════════════════════════
-async function save(type) {
-  const btn = g(type === 'ml' ? 'ml-save' : 'sh-save')
-  let s = { type, date: new Date().toLocaleString('pt-BR') }
-
-  if (type === 'ml') {
-    const p = parseFloat(g('mp2').value) || 0
-    if (!p) { toast('Preencha o preço antes de salvar.', 'err'); return }
-    const cost = parseFloat(g('mc').value) || 0
-    const comm = parseFloat(g('mco').value) || 0, ant = parseFloat(g('ma').value) || 0
-    const des = parseFloat(g('md').value) || 0, imp = parseFloat(g('mi').value) || 0
-    const fr = parseFloat(g('mfr').value) || 0
-    const cv = p * (comm / 100), av = p * (ant / 100), dv = p * (des / 100), iv = p * (imp / 100)
-    s.name = g('mn').value || 'Produto ML'
-    s.price = p; s.cost = cost; s.frete = fr
-    s.comm = comm; s.antec = ant; s.desc = des; s.imp = imp; s.seg = mlSeg
-    s.lucro = p - (cv + av + dv + iv + fr + cost)
-    s.margem = (s.lucro / p) * 100
-  } else {
-    const p = parseFloat(g('sp').value) || 0
-    if (!p) { toast('Preencha o preço antes de salvar.', 'err'); return }
-    const cost = parseFloat(g('sc').value) || 0
-    const frOn = g('sh-ft').checked, fr = frOn ? (parseFloat(g('sf').value) || 0) : 0
-    const ant = parseFloat(g('sa').value) || 0, des = parseFloat(g('sdesc').value) || 0
-    const imp = parseFloat(g('simp').value) || 0, out = parseFloat(g('so').value) || 0
-    const taxa = shopRate(p), av = p * (ant / 100), dv = p * (des / 100), iv = p * (imp / 100), ov = p * (out / 100)
-    s.name = g('sn').value || 'Produto Shopee'
-    s.price = p; s.cost = cost; s.frete = fr
-    s.antec = ant; s.desc = des; s.imp = imp; s.outros = out
-    s.lucro = p - (taxa + av + dv + iv + ov + fr + cost)
-    s.margem = (s.lucro / p) * 100
-  }
-
-  btn.disabled = true; btn.textContent = 'Salvando...'
+  btn.disabled=true;btn.textContent='Salvando...'
   await saveSim(s)
-  btn.disabled = false; btn.textContent = 'Salvar simulação'
+  btn.disabled=false;btn.textContent='Salvar simulação'
 }
 
-// ═══════════════════════════════════════
-// HISTORY
-// ═══════════════════════════════════════
-function rdHist() {
-  const el = g('hlist')
-  if (!sims.length) {
-    el.innerHTML = '<div class="hempty">Nenhuma simulação salva ainda.<br><br>Calcule um produto e clique em "Salvar simulação".</div>'
-    return
-  }
-  window._es = {}
-  el.innerHTML = sims.map(s => {
-    const { cls, lbl } = mi(s.margem)
-    const seg = s.type === 'ml' ? (s.seg === 'premium' ? ' · Premium' : ' · Clássico') : ''
-    window._es[s.id] = { price: s.price, cost: s.cost, frete: s.frete || 0 }
-    return `<div class="scard">
+function rdHist(){
+  const el=g('hlist')
+  if(!sims.length){el.innerHTML='<div class="hempty">Nenhuma simulação salva ainda.<br><br>Calcule um produto e clique em "Salvar simulação".</div>';return}
+  window._es={}
+  el.innerHTML=sims.map(s=>{
+    const{cls,lbl}=mi(s.margem)
+    const seg=s.type==='ml'?(s.seg==='premium'?' · Premium':' · Clássico'):''
+    window._es[s.id]={price:s.price,cost:s.cost,frete:s.frete||0}
+    return`<div class="scard">
       <div class="sc-top">
-        <span class="sc-badge ${s.type}">${s.type === 'ml' ? 'Mercado Livre' + seg : 'Shopee'}</span>
+        <span class="sc-badge ${s.type}">${s.type==='ml'?'Mercado Livre'+seg:'Shopee'}</span>
         <div class="sc-actions">
           <span class="sc-date">${s.date}</span>
           <button class="btn-sm" onclick="toggleEdit('${s.id}')">Editar</button>
@@ -754,34 +591,27 @@ function rdHist() {
   }).join('')
 }
 
-function toggleEdit(id) {
-  const el = g('edit-' + id)
-  el.style.display = el.style.display === 'none' ? 'block' : 'none'
-}
+function toggleEdit(id){const el=g('edit-'+id);el.style.display=el.style.display==='none'?'block':'none'}
 
-function recompute(id, field, val) {
-  const s = sims.find(x => x.id === id); if (!s) return
-  window._es[id][field] = parseFloat(val) || 0
-  const { price: p, cost: c, frete: fr } = window._es[id]
-  if (!p) { g('er-' + id).innerHTML = ''; return }
-  let liq, mg
-  if (s.type === 'ml') {
-    const cv = p * ((s.comm || 11.5) / 100), av = p * ((s.antec || 4.2) / 100)
-    const dv = p * ((s.desc || 5) / 100), iv = p * ((s.imp || 10) / 100)
-    liq = p - (cv + av + dv + iv + fr + c); mg = (liq / p) * 100
-  } else {
-    const taxa = shopRate(p), av = p * ((s.antec || 6) / 100)
-    const dv = p * ((s.desc || 5) / 100), iv = p * ((s.imp || 10) / 100)
-    const ov = p * ((s.outros || 0) / 100)
-    liq = p - (taxa + av + dv + iv + ov + fr + c); mg = (liq / p) * 100
+function recompute(id,field,val){
+  const s=sims.find(x=>x.id===id);if(!s)return
+  window._es[id][field]=parseFloat(val)||0
+  const{price:p,cost:c,frete:fr}=window._es[id]
+  if(!p){g('er-'+id).innerHTML='';return}
+  let liq,mg
+  if(s.type==='ml'){
+    const cv=p*((s.comm||11.5)/100),av=p*((s.antec||4.2)/100)
+    const dv=p*((s.desc||5)/100),iv=p*((s.imp||10)/100)
+    liq=p-(cv+av+dv+iv+fr+c);mg=(liq/p)*100
+  }else{
+    const taxa=shopRate(p),av=p*((s.antec||6)/100)
+    const dv=p*((s.desc||5)/100),iv=p*((s.imp||10)/100),ov=p*((s.outros||0)/100)
+    liq=p-(taxa+av+dv+iv+ov+fr+c);mg=(liq/p)*100
   }
-  const { cls, lbl } = mi(mg)
-  g('er-' + id).innerHTML = `Lucro: <b>${R(liq)}</b> &nbsp;·&nbsp; Margem: <b><span class="m-${cls}">${P(mg)} · ${lbl}</span></b>`
+  const{cls,lbl}=mi(mg)
+  g('er-'+id).innerHTML=`Lucro: <b>${R(liq)}</b> &nbsp;·&nbsp; Margem: <b><span class="m-${cls}">${P(mg)} · ${lbl}</span></b>`
 }
 
-// ═══════════════════════════════════════
-// START
-// ═══════════════════════════════════════
 init()
 </script>
 </body>
