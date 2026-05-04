@@ -309,7 +309,7 @@ input:checked+.slider:before{transform:translateX(16px)}
         <div class="frow-val" style="gap:6px">
           <span class="unit">R$</span>
           <input id="im-dolar" type="number" step="0.01" value="5.80" oninput="cim()" style="width:70px">
-          <button onclick="fetchDolar()" id="im-dolar-btn" style="padding:4px 10px;border:1px solid var(--border2);border-radius:7px;background:var(--bg);font-size:11px;font-weight:600;cursor:pointer;color:var(--text2);white-space:nowrap">&#8635; Atualizar</button>
+          <button onclick="fetchDolar()" id="im-dolar-btn" style="padding:4px 10px;border:1px solid var(--border2);border-radius:7px;background:var(--bg);font-size:11px;font-weight:600;cursor:pointer;color:var(--text2);white-space:nowrap">↻ Atualizar</button>
         </div>
       </div>
       <div id="im-dolar-info" style="font-size:11px;color:var(--text3);padding:.3rem 0 .1rem"></div>
@@ -468,8 +468,8 @@ async function clrAll(){
 }
 
 function swTab(t){
-  document.querySelectorAll('.nb').forEach(function(e,i){e.classList.toggle('on',['ml','sh','hi','im'][i]===t);});
-  ['ml','sh','hi','im'].forEach(function(x){g('t-'+x).classList.toggle('on',x===t);});
+  document.querySelectorAll('.nb').forEach(function(e,i){e.classList.toggle('on',['ml','sh','im','hi'][i]===t);});
+  ['ml','sh','im','hi'].forEach(function(x){g('t-'+x).classList.toggle('on',x===t);});
   if(t==='hi')rdHist();
 }
 
@@ -834,7 +834,7 @@ async function fetchDolar(){
   }catch(e){
     g('im-dolar-info').textContent='Nao foi possivel atualizar. Verifique sua conexao.';
   }
-  btn.textContent='&#8635; Atualizar';btn.disabled=false;
+  btn.textContent='↻ Atualizar';btn.disabled=false;
 }
 
 function cim(){
@@ -871,16 +871,20 @@ function cim(){
   // Unitario
   var unitario=custoTotal/qty;
 
+  var usdTotal=prod+frete+seg;
   g('im-result').innerHTML=
-    row('VMLD (Produto+Frete+Seguro)',R(vmld))+
-    row('Imposto II ('+P(ii)+')',R(iiVal))+
-    row('Subtotal (VMLD + II)',R(subtotal))+
-    row('Base ICMS (calculo por dentro)',R(baseIcms))+
-    row('ICMS ('+P(icmsPct)+')',R(icmsVal))+
-    row('Total Tributos',R(totalTrib))+
-    row('Cobertura Cambial',R(vmld))+
-    row('Outras Despesas / ADM',R(adm))+
-    rowT('Custo Total',R(custoTotal));
+    '<div class="rrow" style="background:var(--bg2);font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;padding:.4rem 1rem">PASSO 1 — Conversao para reais</div>'+
+    row('Produtos ($ '+usdTotal.toFixed(2)+' USD)','$ '+usdTotal.toFixed(2)+' × '+dolar.toFixed(2)+' = '+R(vmld))+
+    '<div class="rrow" style="background:var(--bg2);font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;padding:.4rem 1rem">PASSO 2 — Impostos de importacao</div>'+
+    row('II '+ii+'% sobre '+R(vmld),R(iiVal))+
+    row('Base de calculo ICMS',R(baseIcms))+
+    row('ICMS '+icmsPct+'% (embutido na base)',R(icmsVal))+
+    row('Total de impostos (II + ICMS)',R(totalTrib))+
+    '<div class="rrow" style="background:var(--bg2);font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;padding:.4rem 1rem">PASSO 3 — Custo final</div>'+
+    row('Mercadoria em reais',R(vmld))+
+    row('Impostos',R(totalTrib))+
+    (adm>0?row('Outras despesas / ADM',R(adm)):'')+
+    rowT('Custo Total ('+qty+' und)',R(custoTotal));
 
   g('im-unit-box').style.display='block';
   g('im-unit-val').textContent=R(unitario);
