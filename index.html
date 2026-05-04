@@ -123,6 +123,8 @@ input:checked+.slider:before{transform:translateX(16px)}
 .sc-badge.ml{background:#FEF08A;color:#713F12;border:1px solid #FDE047}
 [data-theme="dark"] .sc-badge.ml{background:#422006;color:#FDE047;border:1px solid #854D0E}
 .sc-badge.sh{background:#FED7AA;color:#7C2D12;border:1px solid #FB923C}
+.sc-badge.im{background:#DCFCE7;color:#14532D;border:1px solid #4ADE80;font-weight:800}
+[data-theme="dark"] .sc-badge.im{background:#052E16;color:#4ADE80;border:1px solid #16A34A}
 [data-theme="dark"] .sc-badge.sh{background:#431407;color:#FB923C;border:1px solid #9A3412}
 .sc-name{font-size:14px;font-weight:600;margin:.2rem 0 .35rem}
 .sc-meta{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.35rem}
@@ -213,9 +215,10 @@ input:checked+.slider:before{transform:translateX(16px)}
       <button class="btn-sm" onclick="logout()">Sair</button>
     </div>
   </div>
-  <div class="nav">
+  <div class="nav" style="grid-template-columns:repeat(4,1fr)">
     <div class="nb on" onclick="swTab('ml')">ML<span class="nb-sub">Mercado Livre</span></div>
     <div class="nb" onclick="swTab('sh')">Shopee<span class="nb-sub">Calculadora</span></div>
+    <div class="nb" onclick="swTab('im')">Importacao<span class="nb-sub">Custo Unit.</span></div>
     <div class="nb" onclick="swTab('hi')">Historico<span class="nb-sub">Simulacoes</span></div>
   </div>
 
@@ -287,6 +290,50 @@ input:checked+.slider:before{transform:translateX(16px)}
     </div>
     <button class="calcbtn sh" onclick="csh()">Calcular</button>
     <button class="savebtn" id="sh-save" onclick="save('sh')">Salvar simulacao</button>
+  </div>
+
+
+  <div id="t-im" class="tc">
+    <div class="card">
+      <div class="card-title">Produto importado</div>
+      <div class="frow"><label>Nome do produto</label><input id="im-name" type="text" placeholder="Ex: Fone Bluetooth"></div>
+      <div class="frow"><label>Valor dos produtos (USD)</label><div class="frow-val"><span class="unit">$</span><input id="im-prod" type="number" step="0.01" placeholder="0.00" oninput="cim()"></div></div>
+      <div class="frow"><label>Frete (USD)</label><div class="frow-val"><span class="unit">$</span><input id="im-frete" type="number" step="0.01" placeholder="0.00" oninput="cim()"></div></div>
+      <div class="frow"><label>Seguro (USD) <span class="fnote">opcional</span></label><div class="frow-val"><span class="unit">$</span><input id="im-seg" type="number" step="0.01" value="0" oninput="cim()"></div></div>
+      <div class="frow"><label>Quantidade de produtos</label><div class="frow-val"><input id="im-qty" type="number" step="1" placeholder="1" oninput="cim()"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Cambio &amp; Taxas</div>
+      <div class="frow">
+        <label>Dolar do dia (R$)</label>
+        <div class="frow-val" style="gap:6px">
+          <span class="unit">R$</span>
+          <input id="im-dolar" type="number" step="0.01" value="5.80" oninput="cim()" style="width:70px">
+          <button onclick="fetchDolar()" id="im-dolar-btn" style="padding:4px 10px;border:1px solid var(--border2);border-radius:7px;background:var(--bg);font-size:11px;font-weight:600;cursor:pointer;color:var(--text2);white-space:nowrap">&#8635; Atualizar</button>
+        </div>
+      </div>
+      <div id="im-dolar-info" style="font-size:11px;color:var(--text3);padding:.3rem 0 .1rem"></div>
+      <div class="frow"><label>II - Imposto de Importacao</label><div class="frow-val"><input id="im-ii" type="number" step="0.1" value="60" oninput="cim()"><span class="unit">%</span></div></div>
+      <div class="frow"><label>ICMS</label><div class="frow-val"><input id="im-icms" type="number" step="0.1" value="18" oninput="cim()"><span class="unit">%</span></div></div>
+      <div class="frow"><label>Outras despesas / Tarifa ADM (R$)</label><div class="frow-val"><span class="unit">R$</span><input id="im-adm" type="number" step="0.01" value="0" oninput="cim()"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-header">Resultado - Importacao</div>
+      <div id="im-result"><div class="rrow"><span class="rl">Preencha os dados acima</span><span class="rv">-</span></div></div>
+    </div>
+    <div id="im-unit-box" style="display:none;background:var(--ok-bg);border:2px solid var(--ok);border-radius:12px;padding:.85rem 1rem;margin-bottom:.75rem;text-align:center">
+      <div style="font-size:11px;font-weight:600;color:var(--ok);letter-spacing:.5px;text-transform:uppercase;margin-bottom:.25rem">Custo Unitario</div>
+      <div id="im-unit-val" style="font-size:28px;font-weight:700;color:var(--ok)"></div>
+    </div>
+    <div id="im-sim-btns" style="display:none;display:none">
+      <div style="font-size:11px;color:var(--text3);text-align:center;margin-bottom:.5rem">Simular nos marketplaces com este custo:</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem">
+        <button class="calcbtn ml" style="margin-bottom:0" onclick="simularML()">Simular no ML</button>
+        <button class="calcbtn sh" style="margin-bottom:0" onclick="simularSH()">Simular na Shopee</button>
+      </div>
+    </div>
+    <button class="calcbtn" style="background:#555;margin-bottom:.4rem" onclick="cim()">Calcular</button>
+    <button class="savebtn" id="im-save" onclick="save('im')">Salvar simulacao</button>
   </div>
 
   <div id="t-hi" class="tc">
@@ -421,8 +468,8 @@ async function clrAll(){
 }
 
 function swTab(t){
-  document.querySelectorAll('.nb').forEach(function(e,i){e.classList.toggle('on',['ml','sh','hi'][i]===t);});
-  ['ml','sh','hi'].forEach(function(x){g('t-'+x).classList.toggle('on',x===t);});
+  document.querySelectorAll('.nb').forEach(function(e,i){e.classList.toggle('on',['ml','sh','hi','im'][i]===t);});
+  ['ml','sh','hi','im'].forEach(function(x){g('t-'+x).classList.toggle('on',x===t);});
   if(t==='hi')rdHist();
 }
 
@@ -528,7 +575,7 @@ function csh(){
 }
 
 async function save(type){
-  var btn=g(type==='ml'?'ml-save':'sh-save');
+  var btn=g(type==='ml'?'ml-save':type==='sh'?'sh-save':'im-save');
   var s={type:type,date:new Date().toLocaleString('pt-BR')};
   if(type==='ml'){
     var p=parseFloat(g('mp2').value)||0;
@@ -540,7 +587,7 @@ async function save(type){
     s.name=g('mn').value||'Produto ML';s.price=p;s.cost=cost;s.frete=fr;
     s.comm=comm;s.antec=ant;s.desc=des;s.imp=imp;s.seg=mlSeg;
     s.lucro=p-(cv+av+dv+iv+fr+cost);s.margem=(s.lucro/p)*100;
-  }else{
+  }else if(type==='sh'){
     var p=parseFloat(g('sp').value)||0;
     if(!p){toast('Preencha o preco antes de salvar.','err');return;}
     var cost=parseFloat(g('sc').value)||0,frOn=g('sh-ft').checked;
@@ -551,6 +598,28 @@ async function save(type){
     s.name=g('sn').value||'Produto Shopee';s.price=p;s.cost=cost;s.frete=fr;
     s.antec=ant;s.desc=des;s.imp=imp;s.outros=out;
     s.lucro=p-(taxa+av+dv+iv+ov+fr+cost);s.margem=(s.lucro/p)*100;
+  }else if(type==='im'){
+    var prod=parseFloat(g('im-prod').value)||0;
+    if(!prod){toast('Preencha o valor dos produtos antes de salvar.','err');return;}
+    var frete=parseFloat(g('im-frete').value)||0;
+    var seg=parseFloat(g('im-seg').value)||0;
+    var qty=parseFloat(g('im-qty').value)||1;
+    var dolar=parseFloat(g('im-dolar').value)||5.80;
+    var ii=parseFloat(g('im-ii').value)||60;
+    var icmsPct=parseFloat(g('im-icms').value)||18;
+    var adm=parseFloat(g('im-adm').value)||0;
+    var vmld=(prod+frete+seg)*dolar;
+    var iiVal=vmld*(ii/100);
+    var subtotal=vmld+iiVal;
+    var baseIcms=subtotal/(1-(icmsPct/100));
+    var icmsVal=baseIcms*(icmsPct/100);
+    var custoTotal=vmld+iiVal+icmsVal+adm;
+    var unitario=custoTotal/qty;
+    s.name=g('im-name').value||'Importacao';
+    s.prod=prod;s.frete=frete;s.seg=seg;s.qty=qty;s.dolar=dolar;
+    s.ii=ii;s.icms=icmsPct;s.adm=adm;
+    s.vmld=vmld;s.custoTotal=custoTotal;s.unitario=unitario;
+    s.price=unitario;s.lucro=0;s.margem=0;
   }
   try{
     btn.disabled=true;btn.textContent='Salvando...';
@@ -574,7 +643,7 @@ function rdHist(){
     var s=sims[i];
     var inf=mi(s.margem);
     var seg=s.type==='ml'?(s.seg==='premium'?' · Premium':' · Classico'):'';
-    var badge=s.type==='ml'?'Mercado Livre'+seg:'Shopee';
+    var seg=s.type==='ml'?(s.seg==='premium'?' - Premium':' - Classico'):'';var badge=s.type==='ml'?'Mercado Livre'+seg:s.type==='sh'?'Shopee':'Importacao';
     editState[s.id]={price:s.price,cost:s.cost,frete:s.frete||0};
     var spVal=s.type==='ml'
       ? suggML(s.comm||11.5,s.antec||4.2,s.desc||5,s.imp||10,s.frete||0,s.cost)
@@ -603,13 +672,18 @@ function rdHist(){
     // meta row
     var meta=document.createElement('div');meta.className='sc-meta';meta.id='meta-'+s.id;
     var lucroSpan=document.createElement('span');
-    lucroSpan.innerHTML='Lucro <b id="lucro-'+s.id+'">'+R(s.lucro)+'</b>';
     var mgSpan=document.createElement('span');
-    mgSpan.innerHTML='Margem <span class="m-'+inf.cls+'" id="mg-'+s.id+'">'+P(s.margem)+' '+inf.lbl+'</span>';
+    if(s.type==='im'){
+      lucroSpan.innerHTML='Custo Total <b id="lucro-'+s.id+'">'+R(s.custoTotal||0)+'</b>';
+      mgSpan.innerHTML='Custo Unit. <b style="color:var(--ok)" id="mg-'+s.id+'">'+R(s.unitario||0)+'</b>';
+    }else{
+      lucroSpan.innerHTML='Lucro <b id="lucro-'+s.id+'">'+R(s.lucro)+'</b>';
+      mgSpan.innerHTML='Margem <span class="m-'+inf.cls+'" id="mg-'+s.id+'">'+P(s.margem)+' '+inf.lbl+'</span>';
+    }
     meta.appendChild(lucroSpan);meta.appendChild(mgSpan);
 
-    // sugg chip
-    if(s.margem<18&&spVal){
+    // sugg chip (only for ml/sh)
+    if(s.type!=='im'&&s.margem<18&&spVal){
       var chip=document.createElement('span');
       chip.className='sugg-chip';chip.id='chip-'+s.id;
       var slabel=document.createElement('span');slabel.className='slabel';slabel.textContent='Sugerido p/18%:';
@@ -627,7 +701,11 @@ function rdHist(){
     // edit fields
     var editDiv=document.createElement('div');editDiv.className='sc-edit';
     var grid=document.createElement('div');grid.className='sc-edit-grid';
-    var fields=[
+    var fields=s.type==='im'?[
+      {label:'Dolar (R$)',id:'inp-p-'+s.id,val:(s.dolar||5.80).toFixed(2)},
+      {label:'Qtd produtos',id:'inp-c-'+s.id,val:(s.qty||1).toString()},
+      {label:'ADM (R$)',id:'inp-f-'+s.id,val:(s.adm||0).toFixed(2)}
+    ]:[
       {label:'Preco venda (R$)',id:'inp-p-'+s.id,val:s.price.toFixed(2)},
       {label:'Custo (R$)',id:'inp-c-'+s.id,val:s.cost.toFixed(2)},
       {label:'Frete (R$)',id:'inp-f-'+s.id,val:(s.frete||0).toFixed(2)}
@@ -735,6 +813,110 @@ async function doSave(id){
     if(btn){btn.textContent='Salvar';btn.disabled=false;}
   }
 }
+
+// ============ IMPORTACAO ============
+var lastDolarUpdate='';
+
+async function fetchDolar(){
+  var btn=g('im-dolar-btn');
+  btn.textContent='...';btn.disabled=true;
+  try{
+    var res=await fetch('https://economia.awesomeapi.com.br/json/last/USD-BRL');
+    var data=await res.json();
+    var rate=parseFloat(data.USDBRL.bid);
+    if(rate){
+      g('im-dolar').value=rate.toFixed(2);
+      var now=new Date().toLocaleString('pt-BR');
+      lastDolarUpdate=now;
+      g('im-dolar-info').textContent='Atualizado em '+now;
+      cim();
+    }
+  }catch(e){
+    g('im-dolar-info').textContent='Nao foi possivel atualizar. Verifique sua conexao.';
+  }
+  btn.textContent='&#8635; Atualizar';btn.disabled=false;
+}
+
+function cim(){
+  var prod=parseFloat(g('im-prod').value)||0;
+  var frete=parseFloat(g('im-frete').value)||0;
+  var seg=parseFloat(g('im-seg').value)||0;
+  var qty=parseFloat(g('im-qty').value)||1;
+  var dolar=parseFloat(g('im-dolar').value)||5.80;
+  var ii=parseFloat(g('im-ii').value)||60;
+  var icmsPct=parseFloat(g('im-icms').value)||18;
+  var adm=parseFloat(g('im-adm').value)||0;
+
+  if(!prod&&!frete){
+    g('im-result').innerHTML='<div class="rrow"><span class="rl">Preencha os dados acima</span><span class="rv">-</span></div>';
+    g('im-unit-box').style.display='none';
+    g('im-sim-btns').style.display='none';
+    return;
+  }
+
+  // VMLD = (produto + frete + seguro) * dolar
+  var vmld=(prod+frete+seg)*dolar;
+  // II
+  var iiVal=vmld*(ii/100);
+  // Subtotal
+  var subtotal=vmld+iiVal;
+  // Base ICMS (por dentro): base = subtotal / (1 - icms%)
+  var baseIcms=subtotal/(1-(icmsPct/100));
+  // ICMS
+  var icmsVal=baseIcms*(icmsPct/100);
+  // Total tributos
+  var totalTrib=iiVal+icmsVal;
+  // Custo total
+  var custoTotal=vmld+iiVal+icmsVal+adm;
+  // Unitario
+  var unitario=custoTotal/qty;
+
+  g('im-result').innerHTML=
+    row('VMLD (Produto+Frete+Seguro)',R(vmld))+
+    row('Imposto II ('+P(ii)+')',R(iiVal))+
+    row('Subtotal (VMLD + II)',R(subtotal))+
+    row('Base ICMS (calculo por dentro)',R(baseIcms))+
+    row('ICMS ('+P(icmsPct)+')',R(icmsVal))+
+    row('Total Tributos',R(totalTrib))+
+    row('Cobertura Cambial',R(vmld))+
+    row('Outras Despesas / ADM',R(adm))+
+    rowT('Custo Total',R(custoTotal));
+
+  g('im-unit-box').style.display='block';
+  g('im-unit-val').textContent=R(unitario);
+  g('im-sim-btns').style.display='block';
+
+  // store for marketplace simulation
+  window._imUnitario=unitario;
+}
+
+function simularML(){
+  swTab('ml');
+  setTimeout(function(){
+    var v=window._imUnitario;
+    if(!v)return;
+    g('mc').value=v.toFixed(2);
+    var name=g('im-name').value;
+    if(name)g('mn').value=name;
+    cml();
+    toast('Custo de importacao aplicado no Mercado Livre!','ok');
+  },100);
+}
+
+function simularSH(){
+  swTab('sh');
+  setTimeout(function(){
+    var v=window._imUnitario;
+    if(!v)return;
+    g('sc').value=v.toFixed(2);
+    var name=g('im-name').value;
+    if(name)g('sn').value=name;
+    csh();
+    toast('Custo de importacao aplicado na Shopee!','ok');
+  },100);
+}
+// ====================================
+
 init();
 </script>
 </body>
