@@ -141,6 +141,15 @@ input:checked+.slider:before{transform:translateX(16px)}
 .sugg-chip .slabel{font-weight:400;opacity:.8;font-size:11px}
 .sugg-save-btn{display:none;margin-left:4px;background:#15803D;color:#fff;border:none;border-radius:12px;padding:2px 8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit}
 .sugg-save-btn.show{display:inline-block}
+
+.hist-filters{display:flex;gap:.4rem;margin-bottom:.85rem;flex-wrap:wrap}
+.hf-btn{padding:.35rem .85rem;border:1.5px solid var(--border2);border-radius:20px;background:transparent;font-size:12px;font-weight:600;cursor:pointer;color:var(--text2);font-family:inherit;transition:all .15s}
+.hf-btn:hover{background:var(--bg2)}
+.hf-btn.on{border-color:var(--text);background:var(--text);color:var(--card)}
+.hf-btn.ml-f.on{border-color:#2563EB;background:#2563EB;color:#fff}
+.hf-btn.sh-f.on{border-color:#DC2626;background:#DC2626;color:#fff}
+.hf-btn.im-f.on{border-color:#15803D;background:#15803D;color:#fff}
+.hist-section-title{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.7px;text-transform:uppercase;padding:.5rem 0 .4rem;margin-top:.25rem}
 .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:#111;color:#fff;padding:.65rem 1.25rem;border-radius:10px;font-size:13px;font-weight:500;opacity:0;transition:all .3s;z-index:999;white-space:nowrap;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.tok{background:#15803D}.toast.terr{background:#DC2626}
@@ -341,6 +350,12 @@ input:checked+.slider:before{transform:translateX(16px)}
       <h2>Simulacoes salvas</h2>
       <button class="btn-sm" onclick="clrAll()">Limpar tudo</button>
     </div>
+    <div class="hist-filters">
+      <button class="hf-btn on" id="hf-all" onclick="setFilter('all')">Todas</button>
+      <button class="hf-btn ml-f" id="hf-ml" onclick="setFilter('ml')">Mercado Livre</button>
+      <button class="hf-btn sh-f" id="hf-sh" onclick="setFilter('sh')">Shopee</button>
+      <button class="hf-btn im-f" id="hf-im" onclick="setFilter('im')">Importacao</button>
+    </div>
     <div id="hlist"></div>
   </div>
 </div>
@@ -446,13 +461,17 @@ async function loadSims(){
 
 async function saveSim(s){
   try{
-    var res=await sb.from('simulations').insert({user_id:cu.id,type:s.type,name:s.name,data:s}).select().single();
-    if(res.error){toast('Erro: '+res.error.message,'err');return false;}
+    var res=await sb.from('simulations')
+      .insert({user_id:cu.id,type:s.type,name:s.name,data:s})
+      .select('id,created_at')
+      .single();
+    if(res.error){toast('Erro ao salvar: '+res.error.message,'err');return false;}
     var obj=Object.assign({},s);
     obj.id=res.data.id;
     obj.date=new Date(res.data.created_at).toLocaleString('pt-BR');
     sims.unshift(obj);
-    toast('Simulacao salva!','ok');swTab('hi');return true;
+    toast('Simulacao salva!','ok');
+    return true;
   }catch(e){toast('Erro: '+e.message,'err');return false;}
 }
 
@@ -623,24 +642,49 @@ async function save(type){
   }
   try{
     btn.disabled=true;btn.textContent='Salvando...';
-    await saveSim(s);
+    var ok=await saveSim(s);
+    if(ok){swTab('hi');}
   }catch(e){toast('Erro: '+e.message,'err');}
   finally{btn.disabled=false;btn.textContent='Salvar simulacao';}
 }
 
 // --- HISTORY ---
 var editState={};
+var histFilter='all';
+
+function setFilter(f){
+  histFilter=f;
+  ['all','ml','sh','im'].forEach(function(x){
+    var btn=g('hf-'+x);
+    if(btn)btn.classList.toggle('on',x===f);
+  });
+  rdHist();
+}
 
 function rdHist(){
   var el=g('hlist');
-  if(!sims.length){
-    el.innerHTML='<div class="hempty">Nenhuma simulacao salva ainda.<br><br>Calcule e clique em Salvar simulacao.</div>';
+  var filtered=histFilter==='all'?sims:sims.filter(function(s){return s.type===histFilter;});
+  if(!filtered.length){
+    var msg=histFilter==='all'?'Nenhuma simulacao salva ainda.<br><br>Calcule e clique em Salvar simulacao.':'Nenhuma simulacao de '+({ml:'Mercado Livre',sh:'Shopee',im:'Importacao'}[histFilter]||histFilter)+' salva ainda.';
+    el.innerHTML='<div class="hempty">'+msg+'</div>';
     return;
   }
   editState={};
   el.innerHTML='';
-  for(var i=0;i<sims.length;i++){
-    var s=sims[i];
+  // Group by type if showing all
+  var groups=histFilter==='all'
+    ? [{key:'im',label:'Importacao'},{key:'ml',label:'Mercado Livre'},{key:'sh',label:'Shopee'}]
+    : [{key:histFilter,label:{ml:'Mercado Livre',sh:'Shopee',im:'Importacao'}[histFilter]}];
+  for(var g2=0;g2<groups.length;g2++){
+    var grp=groups[g2];
+    var grpSims=filtered.filter(function(s){return s.type===grp.key;});
+    if(!grpSims.length)continue;
+    var titleEl=document.createElement('div');
+    titleEl.className='hist-section-title';
+    titleEl.textContent=grp.label+' ('+grpSims.length+')';
+    el.appendChild(titleEl);
+    for(var i=0;i<grpSims.length;i++){
+      var s=grpSims[i];
     var inf=mi(s.margem);
     var seg=s.type==='ml'?(s.seg==='premium'?' · Premium':' · Classico'):'';
     var seg=s.type==='ml'?(s.seg==='premium'?' - Premium':' - Classico'):'';var badge=s.type==='ml'?'Mercado Livre'+seg:s.type==='sh'?'Shopee':'Importacao';
@@ -720,7 +764,8 @@ function rdHist(){
     }
     editDiv.appendChild(grid);card.appendChild(editDiv);
     el.appendChild(card);
-  }
+    } // end grpSims
+  } // end groups
 }
 
 function applyPrice(id,val){
