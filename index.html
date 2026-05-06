@@ -265,7 +265,10 @@ input:checked+.slider:before{transform:translateX(16px)}
       <div class="result-header">Resultado - Mercado Livre</div>
       <div id="mr"><div class="rrow"><span class="rl">Preencha os dados acima</span><span class="rv">-</span></div></div>
     </div>
-    <button class="calcbtn ml" onclick="cml()">Calcular</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.4rem">
+      <button class="calcbtn ml" style="margin-bottom:0" onclick="cml()">Calcular no ML</button>
+      <button class="calcbtn sh" style="margin-bottom:0" onclick="calcularNoSH()">Calcular na Shopee</button>
+    </div>
     <button class="savebtn" id="ml-save" onclick="save('ml')">Salvar simulacao</button>
   </div>
 
@@ -297,7 +300,10 @@ input:checked+.slider:before{transform:translateX(16px)}
       <div class="result-header">Resultado - Shopee</div>
       <div id="sr"><div class="rrow"><span class="rl">Preencha os dados acima</span><span class="rv">-</span></div></div>
     </div>
-    <button class="calcbtn sh" onclick="csh()">Calcular</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.4rem">
+      <button class="calcbtn ml" style="margin-bottom:0" onclick="calcularNoML()">Calcular no ML</button>
+      <button class="calcbtn sh" style="margin-bottom:0" onclick="csh()">Calcular na Shopee</button>
+    </div>
     <button class="savebtn" id="sh-save" onclick="save('sh')">Salvar simulacao</button>
   </div>
 
@@ -994,6 +1000,43 @@ function simularSH(){
   },100);
 }
 // ====================================
+
+
+// ── CROSS CALC ──
+function calcularNoSH(){
+  // Copy ML fields to Shopee and switch tab
+  var name=g('mn').value;
+  var price1=g('mp1').value;
+  var price2=g('mp2').value;
+  var cost=g('mc').value;
+  swTab('sh');
+  setTimeout(function(){
+    if(name)g('sn').value=name;
+    if(price1)g('sp1').value=price1;
+    if(price2)g('sp').value=price2;
+    if(cost)g('sc').value=cost;
+    csh();
+    toast('Dados copiados para Shopee!','ok');
+  },80);
+}
+
+function calcularNoML(){
+  // Copy Shopee fields to ML and switch tab
+  var name=g('sn').value;
+  var price1=g('sp1').value;
+  var price2=g('sp').value;
+  var cost=g('sc').value;
+  swTab('ml');
+  setTimeout(function(){
+    if(name)g('mn').value=name;
+    if(price1)g('mp1').value=price1;
+    if(price2)g('mp2').value=price2;
+    if(cost)g('mc').value=cost;
+    cml();
+    toast('Dados copiados para Mercado Livre!','ok');
+  },80);
+}
+// ── END CROSS CALC ──
 
 init();
 </script>
