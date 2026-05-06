@@ -444,7 +444,7 @@ async function reg(){
   var res=await sb.auth.signUp({email:email,password:pass,options:{data:{name:name}}});
   g('rbtn').disabled=false;g('rbtn').textContent='Criar conta';
   if(res.error){m.textContent=res.error.message;return;}
-  m.className='amsg ok';m.textContent='Conta criada! Verifique o e-mail para confirmar.';
+  m.className='amsg ok';m.textContent='Conta criada! Faca login para continuar.';
 }
 
 async function logout(){await sb.auth.signOut();cu=null;sims=[];frFixed=false;}
@@ -459,20 +459,46 @@ async function loadSims(){
   });
 }
 
+function withTimeout(promise, ms){
+  var timeout=new Promise(function(_,reject){
+    setTimeout(function(){reject(new Error('timeout'));},ms);
+  });
+  return Promise.race([promise,timeout]);
+}
+
 async function saveSim(s){
-  try{
-    var res=await sb.from('simulations')
-      .insert({user_id:cu.id,type:s.type,name:s.name,data:s})
-      .select('id,created_at')
-      .single();
-    if(res.error){toast('Erro ao salvar: '+res.error.message,'err');return false;}
-    var obj=Object.assign({},s);
-    obj.id=res.data.id;
-    obj.date=new Date(res.data.created_at).toLocaleString('pt-BR');
-    sims.unshift(obj);
-    toast('Simulacao salva!','ok');
-    return true;
-  }catch(e){toast('Erro: '+e.message,'err');return false;}
+  for(var attempt=1;attempt<=3;attempt++){
+    try{
+      var insertPromise=sb.from('simulations')
+        .insert({user_id:cu.id,type:s.type,name:s.name,data:s})
+        .select('id,created_at')
+        .single();
+      var res=await withTimeout(insertPromise, 8000);
+      if(res.error){
+        if(attempt<3){
+          await new Promise(function(r){setTimeout(r,1000);});
+          continue;
+        }
+        toast('Erro: '+res.error.message,'err');
+        return false;
+      }
+      var obj=Object.assign({},s);
+      obj.id=res.data.id;
+      obj.date=new Date(res.data.created_at).toLocaleString('pt-BR');
+      sims.unshift(obj);
+      toast('Simulacao salva!','ok');
+      return true;
+    }catch(e){
+      if(attempt<3){
+        toast('Tentando novamente ('+attempt+' de 3)...','');
+        await new Promise(function(r){setTimeout(r,1500);});
+        continue;
+      }
+      toast('Falha ao salvar. Verifique sua conexao.','err');
+      return false;
+    }
+  }
+  return false;
 }
 
 async function deleteSim(id){
@@ -644,8 +670,11 @@ async function save(type){
     btn.disabled=true;btn.textContent='Salvando...';
     var ok=await saveSim(s);
     if(ok){swTab('hi');}
-  }catch(e){toast('Erro: '+e.message,'err');}
-  finally{btn.disabled=false;btn.textContent='Salvar simulacao';}
+  }catch(e){
+    toast('Erro inesperado: '+e.message,'err');
+  }finally{
+    btn.disabled=false;btn.textContent='Salvar simulacao';
+  }
 }
 
 // --- HISTORY ---
